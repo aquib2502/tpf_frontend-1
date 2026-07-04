@@ -314,7 +314,7 @@ const remaining = Math.max(0, targetAmount - raisedAmount);
   <StatCard
     darkMode={darkMode}
     icon={<TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />}
-    value={`₹${formatNumber(raisedAmount)}`}
+    value={(!isFoundation && targetAmount > 0 && raisedAmount >= targetAmount) ? "Goal Achieved" : `₹${formatNumber(raisedAmount)}`}
     label="Raised"
     color="emerald"
   />
