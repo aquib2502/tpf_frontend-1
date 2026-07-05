@@ -57,6 +57,7 @@ export default function DonatePopUpModal({
   imdadEligible = true,
   allowedDonationTypes = [],
   unitConfig = null,
+  referral,
 }) {
   /* ── state ───────────────────────────────────────────────── */
   const [selectedAmount, setSelectedAmount] = useState(100);
@@ -243,6 +244,7 @@ export default function DonatePopUpModal({
           isAnonymous,
           isTaxEligible: false,
           userId: userIdToUse,
+          referral: referral || {},
         }),
       });
       const data = await res.json();

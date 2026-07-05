@@ -37,6 +37,7 @@ export default function DonationCard({
   allowedDonationTypes = [],
   unitConfig = null,
   isCompleted = false,
+  referral,
 }) {
   /* ── Amount state ─────────────────────────────────────────────────────── */
   const [selectedAmount, setSelectedAmount] = useState(100);
@@ -202,6 +203,7 @@ export default function DonationCard({
           isAnonymous,
           isTaxEligible: claim80G,
           userId: userIdToUse,
+          referral: referral || {},
         }),
       });
       const data = await res.json();

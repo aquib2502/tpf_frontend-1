@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useFetchCampaignBySlugQuery } from "@/utils/slices/campaignApiSlice";
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
@@ -22,6 +22,57 @@ import GlobalLoader from "@/components/GlobalLoader";
 export default function CampaignPage() {
   const { slug } = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Find name
+  let rawName = searchParams.get("name") || searchParams.get("referral_name") || searchParams.get("ref_name");
+  // Find city
+  let rawCity = searchParams.get("city") || searchParams.get("referral_city") || searchParams.get("ref_city");
+  // Find source/category
+  let rawRef = searchParams.get("source") || searchParams.get("category") || searchParams.get("referral_source") || searchParams.get("referral_category") || searchParams.get("ref_category");
+  
+  const refVal = searchParams.get("ref");
+  const categoriesList = ["masjid", "insta", "instagram", "whatsapp", "email", "meta", "facebook", "broadcast", "ads"];
+  
+  let detectedCategory = rawRef || "";
+  let detectedName = rawName || "";
+  
+  if (refVal) {
+    const isCategory = categoriesList.some(cat => refVal.toLowerCase().includes(cat));
+    if (isCategory) {
+      if (!detectedCategory) detectedCategory = refVal;
+    } else {
+      if (!detectedName) detectedName = refVal;
+    }
+  }
+  
+  if (!detectedCategory && refVal) detectedCategory = refVal;
+  if (!detectedName && refVal && refVal !== detectedCategory) detectedName = refVal;
+  
+  let refSource = "";
+  if (detectedCategory) {
+    const cleanRef = detectedCategory.toLowerCase().trim();
+    if (cleanRef.includes("insta") || cleanRef === "instagram" || cleanRef === "ig") {
+      refSource = "Insta Influencer";
+    } else if (cleanRef.includes("masjid") || cleanRef.includes("mosque")) {
+      refSource = "Masjid";
+    } else if (cleanRef.includes("whatsapp") || cleanRef === "wa") {
+      refSource = "WhatsappAPI";
+    } else if (cleanRef.includes("email") || cleanRef.includes("broadcast")) {
+      refSource = "Email Broadcast";
+    } else if (cleanRef.includes("meta") || cleanRef.includes("fb") || cleanRef.includes("facebook") || cleanRef.includes("ad")) {
+      refSource = "Meta Ads";
+    } else {
+      refSource = detectedCategory.charAt(0).toUpperCase() + detectedCategory.slice(1);
+    }
+  }
+
+  const referral = {
+    refSource,
+    refName: detectedName || "",
+    refCity: rawCity || ""
+  };
+
   const [darkMode, setDarkMode] = useState(false);
   const [scrolled, setScrolled] = useState(true);
   const donationCardRef = useRef(null);
@@ -140,6 +191,7 @@ export default function CampaignPage() {
               unitConfig={campaign.unitConfig}
               darkMode={darkMode}
               isCompleted={isCompleted}
+              referral={referral}
             />
           </div>
         </div>
@@ -193,6 +245,7 @@ export default function CampaignPage() {
         taxEligible={campaign.taxBenefits}
         allowedDonationTypes={campaign.allowedDonationTypes}
         unitConfig={campaign.unitConfig}
+        referral={referral}
       />
     </div>
   );
