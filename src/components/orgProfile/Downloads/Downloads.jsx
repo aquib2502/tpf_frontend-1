@@ -721,7 +721,7 @@ export default function DownloadsPage({ darkModeFromParent }) {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
-    }).replace(/\//g, '.')
+    })
 
     const doc = new jsPDF({
       orientation: 'landscape',
@@ -729,7 +729,11 @@ export default function DownloadsPage({ darkModeFromParent }) {
       format: 'a4'
     })
 
-    const name = userInfo?.fullName?.toUpperCase() || "VALUED DONOR"
+    const toTitleCase = (str) => {
+      if (!str) return "";
+      return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    }
+    const name = toTitleCase(userInfo?.fullName || "VALUED DONOR")
 
     try {
       // Load the template image
@@ -743,68 +747,17 @@ export default function DownloadsPage({ darkModeFromParent }) {
         doc.rect(5, 5, 287, 200);
       }
 
-      // Text placement adjusted for the provided template layout
-      // The text block is on the right side (centered around X = 200)
-      const centerX = 200;
+      // Name above the green line (Times-Italic, Title Case, dark charcoal)
+      doc.setFont("times", "italic")
+      doc.setFontSize(28)
+      doc.setTextColor(44, 62, 80)
+      doc.text(name, 148.5, 93.8, { align: "center" })
 
-      // 1. "CERTIFICATE" heading (large, emerald green, top right)
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(48);
-      doc.setTextColor(95, 188, 169); // Emerald/teal color matching template
-      doc.text("CERTIFICATE", centerX + 16, 50, { align: "center" });
-
-      // 2. "of Appreciation" subheading (smaller, grey)
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(18);
-      doc.setTextColor(140, 140, 140); // Light grey
-      doc.text("of Appreciation", 230, 62, { align: "left" });
-      // 3. "This certificate proudly present to"
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(14);
-      doc.setTextColor(120, 120, 120); // Medium grey
-      doc.text("This certificate proudly present to", centerX, 90, { align: "left" });
-
-      // 4. User Name 
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(40);
-      doc.setTextColor(75, 150, 150);
-      doc.text(name, centerX, 112, { align: "center" });
-
-
-
-      // 6. Appreciation Text with Dynamic Date
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(14);
-      doc.setTextColor(110, 110, 110);
-
-      // Line 1: "on [DATE] in sincere appreciation of his generous"
-      const line1Part1 = "on ";
-      const line1Part2 = dateStr;
-      const line1Part3 = " in sincere appreciation of his generous";
-
-      // Calculate widths for proper centering
-      doc.setFont("helvetica", "normal");
-      const w1 = doc.getStringUnitWidth(line1Part1) * 14 / doc.internal.scaleFactor;
-      doc.setFont("helvetica", "bold");
-      const w2 = doc.getStringUnitWidth(line1Part2) * 14 / doc.internal.scaleFactor;
-      doc.setFont("helvetica", "normal");
-      const w3 = doc.getStringUnitWidth(line1Part3) * 14 / doc.internal.scaleFactor;
-      const totalWidth = w1 + w2 + w3;
-      const startX = centerX - (totalWidth / 3);
-
-      // Render line 1 with bold date
-      doc.setFont("helvetica", "normal");
-      doc.text(line1Part1, startX, 130, { align: "left" });
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(60, 60, 67); // Darker for date
-      doc.text(line1Part2, startX + w1, 130, { align: "left" });
-      doc.setFont("helvetica", "normal");
-      doc.setTextColor(110, 110, 110);
-      doc.text(line1Part3, startX + w1 + w2, 130, { align: "left" });
-
-      // Line 2 & 3: Centered
-      doc.text("donation & continued support, which have greatly", startX + w1 + 2, 140, { align: "left" });
-      doc.text("contributed to support towards the cause.", startX + w2 + 3, 150, { align: "left" });
+      // Date on the blank line (Helvetica-Bold, dark charcoal)
+      doc.setFont("helvetica", "bold")
+      doc.setFontSize(14)
+      doc.setTextColor(44, 62, 80)
+      doc.text(dateStr, 90, 116.4, { align: "center" })
 
       doc.save(`Appreciation_Certificate_${name.replace(/\s+/g, '_')}.pdf`);
     } catch (error) {

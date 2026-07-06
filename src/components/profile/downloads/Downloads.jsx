@@ -466,9 +466,14 @@ export default function DownloadsPage({ darkModeFromParent }) {
   // ── Certificate ──────────────────────────────────────────────────────────
   const handleDownloadCertificate = async (currentTxn) => {
     const lastDate = stats?.lastDonationDate || currentTxn.date
-    const dateStr = new Date(lastDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '.')
+    const dateStr = new Date(lastDate).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
     const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
-    const name = userInfo?.fullName?.toUpperCase() || "VALUED DONOR"
+    
+    const toTitleCase = (str) => {
+      if (!str) return "";
+      return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    }
+    const name = toTitleCase(userInfo?.fullName || "VALUED DONOR")
 
     try {
       const templateData = await getLogoDataUrl('/Certificate_Of_Achievement.jpg')
@@ -478,31 +483,17 @@ export default function DownloadsPage({ darkModeFromParent }) {
         doc.setDrawColor(16, 185, 129); doc.setLineWidth(1); doc.rect(5, 5, 287, 200)
       }
 
-      const centerX = 200
-      doc.setFont("helvetica", "bold"); doc.setFontSize(48); doc.setTextColor(95, 188, 169)
-      doc.text("CERTIFICATE", centerX + 16, 50, { align: "center" })
-      doc.setFont("helvetica", "normal"); doc.setFontSize(18); doc.setTextColor(140, 140, 140)
-      doc.text("of Appreciation", 230, 62, { align: "left" })
-      doc.setFont("helvetica", "normal"); doc.setFontSize(14); doc.setTextColor(120, 120, 120)
-      doc.text("This certificate proudly present to", centerX, 90, { align: "left" })
-      doc.setFont("helvetica", "bold"); doc.setFontSize(40); doc.setTextColor(75, 150, 150)
-      doc.text(name, centerX, 112, { align: "center" })
+      // Name above the green line (Times-Italic, Title Case, dark charcoal)
+      doc.setFont("times", "italic")
+      doc.setFontSize(28)
+      doc.setTextColor(44, 62, 80)
+      doc.text(name, 148.5, 93.8, { align: "center" })
 
-      doc.setFont("helvetica", "normal"); doc.setFontSize(14); doc.setTextColor(110, 110, 110)
-      const line1Part1 = "on ", line1Part2 = dateStr, line1Part3 = " in sincere appreciation of his generous"
-      doc.setFont("helvetica", "normal")
-      const w1 = doc.getStringUnitWidth(line1Part1) * 14 / doc.internal.scaleFactor
+      // Date on the blank line (Helvetica-Bold, dark charcoal)
       doc.setFont("helvetica", "bold")
-      const w2 = doc.getStringUnitWidth(line1Part2) * 14 / doc.internal.scaleFactor
-      doc.setFont("helvetica", "normal")
-      const w3 = doc.getStringUnitWidth(line1Part3) * 14 / doc.internal.scaleFactor
-      const startX = centerX - ((w1 + w2 + w3) / 3)
-
-      doc.setFont("helvetica", "normal"); doc.text(line1Part1, startX, 130, { align: "left" })
-      doc.setFont("helvetica", "bold"); doc.setTextColor(60, 60, 67); doc.text(line1Part2, startX + w1, 130, { align: "left" })
-      doc.setFont("helvetica", "normal"); doc.setTextColor(110, 110, 110); doc.text(line1Part3, startX + w1 + w2, 130, { align: "left" })
-      doc.text("donation & continued support, which have greatly", startX + w1 + 2, 140, { align: "left" })
-      doc.text("contributed to support towards the cause.", startX + w2 + 3, 150, { align: "left" })
+      doc.setFontSize(14)
+      doc.setTextColor(44, 62, 80)
+      doc.text(dateStr, 90, 116.4, { align: "center" })
 
       doc.save(`Appreciation_Certificate_${name.replace(/\s+/g, '_')}.pdf`)
     } catch (error) {
