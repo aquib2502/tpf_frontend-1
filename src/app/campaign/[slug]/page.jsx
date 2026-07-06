@@ -53,7 +53,7 @@ export default function CampaignPage() {
   if (detectedCategory) {
     const cleanRef = detectedCategory.toLowerCase().trim();
     if (cleanRef.includes("insta") || cleanRef === "instagram" || cleanRef === "ig") {
-      refSource = "Insta Influencer";
+      refSource = "Influencer";
     } else if (cleanRef.includes("masjid") || cleanRef.includes("mosque")) {
       refSource = "Masjid";
     } else if (cleanRef.includes("whatsapp") || cleanRef === "wa") {
