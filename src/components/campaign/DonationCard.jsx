@@ -38,6 +38,7 @@ export default function DonationCard({
   unitConfig = null,
   isCompleted = false,
   referral,
+  source,
 }) {
   /* ── Amount state ─────────────────────────────────────────────────────── */
   const [selectedAmount, setSelectedAmount] = useState(100);
@@ -51,7 +52,7 @@ export default function DonationCard({
   const [showCustomTipInput, setShowCustomTipInput] = useState(false);
 
   /* ── Donor state ──────────────────────────────────────────────────────── */
-  const [donationType, setDonationType] = useState('SADAQAH');
+  const [donationType, setDonationType] = useState(source !== 'FOUNDATION' ? 'IMDAD' : 'SADAQAH');
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [claim80G, setClaim80G] = useState(false);
 
@@ -113,7 +114,9 @@ export default function DonationCard({
 
   /* ── Ensure valid default donation type ──────────────────────────────── */
   useEffect(() => {
-    if (
+    if (source !== 'FOUNDATION') {
+      setDonationType('IMDAD');
+    } else if (
       allowedDonationTypes?.length > 0 &&
       !allowedDonationTypes.some(
         (at) =>
@@ -123,7 +126,7 @@ export default function DonationCard({
     ) {
       setDonationType(filteredDonationTypes[0]?.id || 'SADAQAH');
     }
-  }, [allowedDonationTypes]);
+  }, [allowedDonationTypes, source]);
 
   /* ── Set initial preset key when campaign config loads ───────────────── */
   useEffect(() => {

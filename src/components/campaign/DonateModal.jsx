@@ -58,6 +58,7 @@ export default function DonatePopUpModal({
   allowedDonationTypes = [],
   unitConfig = null,
   referral,
+  source,
 }) {
   /* ── state ───────────────────────────────────────────────── */
   const [selectedAmount, setSelectedAmount] = useState(100);
@@ -68,7 +69,7 @@ export default function DonatePopUpModal({
   const [customTip, setCustomTip] = useState('');
   const [showCustomTipInput, setShowCustomTipInput] = useState(false);
   const [cashfreeData, setCashfreeData] = useState(null);
-  const [donationType, setDonationType] = useState('SADAQAH');
+  const [donationType, setDonationType] = useState(source !== 'FOUNDATION' ? 'IMDAD' : 'SADAQAH');
   const [showTipInfoModal, setShowTipInfoModal] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [fullName, setFullName] = useState('');
@@ -115,7 +116,9 @@ export default function DonatePopUpModal({
 
   /* ── sync donation type when allowedDonationTypes changes ── */
   useEffect(() => {
-    if (
+    if (source !== 'FOUNDATION') {
+      setDonationType('IMDAD');
+    } else if (
       allowedDonationTypes?.length > 0 &&
       !allowedDonationTypes.some(
         (at) =>
@@ -125,7 +128,7 @@ export default function DonatePopUpModal({
     ) {
       setDonationType(filteredDonationTypes[0]?.id || 'SADAQAH');
     }
-  }, [allowedDonationTypes]);
+  }, [allowedDonationTypes, source]);
 
   /* ── prefill from logged-in user ────────────────────────── */
   useEffect(() => {

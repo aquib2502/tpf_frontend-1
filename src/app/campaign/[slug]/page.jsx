@@ -192,6 +192,7 @@ export default function CampaignPage() {
               darkMode={darkMode}
               isCompleted={isCompleted}
               referral={referral}
+              source={campaign.source}
             />
           </div>
         </div>
@@ -246,6 +247,7 @@ export default function CampaignPage() {
         allowedDonationTypes={campaign.allowedDonationTypes}
         unitConfig={campaign.unitConfig}
         referral={referral}
+        source={campaign.source}
       />
     </div>
   );
