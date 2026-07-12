@@ -474,12 +474,38 @@ export default function CampaignTabs({ darkMode, campaign }) {
                         className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-lg border transition-all hover:shadow-md
                           ${darkMode ? 'border-zinc-700 hover:border-emerald-500/50' : 'border-gray-200 hover:border-emerald-400'}`}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shrink-0">
-                            <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                          <div
+                            onClick={() => setPreviewDoc(doc)}
+                            className={`w-16 h-20 sm:w-20 sm:h-24 rounded-lg overflow-hidden border shrink-0 bg-gray-50 flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity ${
+                              darkMode ? 'border-zinc-700 bg-zinc-800' : 'border-gray-200 bg-gray-50'
+                            }`}
+                          >
+                            {doc.fileUrl && (doc.fileType?.toLowerCase() === 'pdf' || doc.fileUrl.toLowerCase().endsWith('.pdf')) ? (
+                              <div className="flex flex-col items-center justify-center p-2 text-center h-full">
+                                <FileText className="w-6 h-6 text-red-500 mb-1" />
+                                <span className="text-[9px] font-bold text-gray-500 uppercase">PDF</span>
+                              </div>
+                            ) : (
+                              <img
+                                src={getMediaUrl(doc.fileUrl)}
+                                alt={doc.name}
+                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                  const parent = e.target.parentElement;
+                                  if (parent) {
+                                    const fallback = document.createElement('div');
+                                    fallback.className = 'flex flex-col items-center justify-center p-2 text-center h-full';
+                                    fallback.innerHTML = `<svg class="w-6 h-6 text-emerald-500 mb-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg><span class="text-[9px] font-bold text-gray-500 uppercase">${doc.fileType?.toUpperCase() || 'DOC'}</span>`;
+                                    parent.appendChild(fallback);
+                                  }
+                                }}
+                              />
+                            )}
                           </div>
-                          <div className="min-w-0">
-                            <p className={`font-medium truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                          <div className="min-w-0 flex-1">
+                            <p className={`font-semibold truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                               {doc.name}
                             </p>
                             <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -835,36 +861,26 @@ export default function CampaignTabs({ darkMode, campaign }) {
               className="flex items-center justify-between px-5 py-3 shrink-0"
               onClick={(e) => e.stopPropagation()}
             >
-              <span className="text-white/60 text-sm truncate max-w-[70%]">
+              <span className="text-white/60 text-sm truncate max-w-[80%]">
                 {previewDoc.name}
               </span>
-              <div className="flex items-center gap-4">
-                <a
-                  href={getMediaUrl(previewDoc.fileUrl)}
-                  download
-                  className="text-white/50 hover:text-white text-xs transition-colors"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  Download
-                </a>
-                <button
-                  onClick={() => setPreviewDoc(null)}
-                  className="text-white/50 hover:text-white transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+              <button
+                onClick={() => setPreviewDoc(null)}
+                className="text-white/50 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
             {/* Document fills remaining space */}
             <div
-              className="flex-1 overflow-auto flex items-center justify-center px-4 py-6"
+              className="flex-1 overflow-auto flex items-start justify-center px-4 pb-4"
               onClick={(e) => e.stopPropagation()}
             >
               {previewDoc.fileType?.toLowerCase() === 'pdf' ? (
                 <iframe
                   src={`${getMediaUrl(previewDoc.fileUrl)}#toolbar=0&navpanes=0`}
-                  className="w-full max-w-3xl h-[calc(100vh-80px)] rounded-sm"
+                  className="w-full max-w-4xl h-[calc(100vh-60px)] rounded-sm"
                   title={previewDoc.name}
                 />
               ) : (
@@ -874,7 +890,8 @@ export default function CampaignTabs({ darkMode, campaign }) {
                   transition={{ duration: 0.25 }}
                   src={getMediaUrl(previewDoc.fileUrl)}
                   alt={previewDoc.name}
-                  className="max-w-3xl w-full object-contain rounded-sm"
+                  className="w-full max-w-4xl object-contain rounded-sm"
+                  style={{ maxHeight: 'calc(100vh - 60px)' }}
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = '/fallback-document.png';

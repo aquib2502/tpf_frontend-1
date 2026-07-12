@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, createContext, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -12,6 +13,7 @@ export const SmoothScrollContext = createContext(null);
 
 export default function SmoothScrollProvider({ children }) {
   const lenisRef = useRef(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -37,14 +39,7 @@ export default function SmoothScrollProvider({ children }) {
     ScrollTrigger.addEventListener("refresh", () => lenis.resize());
     ScrollTrigger.refresh();
 
-    const handleRouteChange = () => {
-      lenis.scrollTo(0, { immediate: true });
-      ScrollTrigger.refresh();
-    };
-    window.addEventListener("routeChangeComplete", handleRouteChange);
-
     return () => {
-      window.removeEventListener("routeChangeComplete", handleRouteChange);
       lenis.off("scroll", ScrollTrigger.update);
       gsap.ticker.remove(rafFn);
       lenis.destroy();
@@ -52,6 +47,16 @@ export default function SmoothScrollProvider({ children }) {
       lenisRef.current = null;
     };
   }, []);
+
+  // ✅ Reset scroll position to top whenever pathname changes (Next.js App Router)
+  useEffect(() => {
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 50);
+    }
+  }, [pathname]);
 
   return (
     <SmoothScrollContext.Provider value={lenisRef}>
