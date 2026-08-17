@@ -31,7 +31,7 @@ import { isCampaignVisible } from "@/utils/campaignVisibility"
 
 export default function MyCampaignsPage({ darkModeFromParent }) {
   const userInfo = useSelector((state) => state.auth.userInfo)
-  const isOrganization = userInfo?.type === "organization"
+  const isOrganization = userInfo?.type === "organization" || Boolean(userInfo?.organizationName);
 
   const [darkMode, setDarkMode] = useState(false)
   const searchParams = useSearchParams();
@@ -455,8 +455,9 @@ export default function MyCampaignsPage({ darkModeFromParent }) {
         </div>
       </motion.div>
     );
+  };
 
-    const RequestCard = ({ request }) => {
+  const RequestCard = ({ request }) => {
       const isClarification = request.status === 'clarification';
       const isRejected = request.status === 'rejected';
       const [comment, setComment] = useState(request.organizationStatement || "");
@@ -879,10 +880,10 @@ export default function MyCampaignsPage({ darkModeFromParent }) {
                   {isOrganization && (
                     <button
                       onClick={() => router.push("/organization/profile/my-campaigns/create")}
-                      className={`hidden sm:flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all shadow-lg ${darkMode ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30" : "bg-white text-emerald-600 hover:bg-emerald-50"
+                      className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md cursor-pointer ${darkMode ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30" : "bg-white text-emerald-700 hover:bg-emerald-50"
                         }`}>
-                      <Plus size={20} />
-                      Create Campaign
+                      <Plus size={18} />
+                      Request New Campaign
                     </button>
                   )}
                 </div>
@@ -1054,4 +1055,3 @@ export default function MyCampaignsPage({ darkModeFromParent }) {
       </div>
     )
   }
-}

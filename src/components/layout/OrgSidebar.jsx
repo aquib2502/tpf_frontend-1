@@ -17,6 +17,7 @@ import {
   X,
   Building2,
   BadgeCheck,
+  Plus,
 } from "lucide-react";
 
 const menuItems = [
@@ -215,6 +216,20 @@ const SidebarContent = memo(({ onClose, darkMode, org }) => {
           })}
         </div>
       </nav>
+
+      {/* Campaign Request Action Button */}
+      <div className="px-3 py-2 shrink-0">
+        <Link href="/organization/profile/my-campaigns/create">
+          <button className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all shadow-sm ${
+            darkMode 
+              ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30" 
+              : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20"
+          }`}>
+            <Plus size={16} />
+            Request New Campaign
+          </button>
+        </Link>
+      </div>
 
       {/* Footer */}
       <div

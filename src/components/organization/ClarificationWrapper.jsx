@@ -49,6 +49,7 @@ export default function ClarificationWrapper({ userInfo, darkMode, targetChildre
                 founderMobile: userInfo.ngoDetails?.founderMobile || "",
                 has80G: userInfo.ngoDetails?.has80G || "",
                 hasFCRA: userInfo.ngoDetails?.hasFCRA || "",
+                annualTurnover: userInfo.ngoDetails?.annualTurnover || userInfo.ngoDetails?.annualBudget || userInfo.companyDetails?.annualTurnover || userInfo.companyDetails?.annualRevenue || "",
                 annualBudget: userInfo.ngoDetails?.annualBudget || "",
                 donorDatabase: userInfo.ngoDetails?.donorDatabase || "",
                 fullTimeFundraising: userInfo.ngoDetails?.fullTimeFundraising || "",
@@ -98,6 +99,8 @@ export default function ClarificationWrapper({ userInfo, darkMode, targetChildre
             );
         }
 
+        const clarificationsHistory = userInfo.clarifications || [];
+
         return (
             <div className={`min-h-[70vh] flex flex-col items-center justify-center p-6 ${darkMode ? 'text-white' : 'text-zinc-900'}`}>
                 <div className="w-full max-w-3xl rounded-2xl overflow-hidden border border-amber-200 shadow-xl">
@@ -112,9 +115,33 @@ export default function ClarificationWrapper({ userInfo, darkMode, targetChildre
                     <div className={`p-8 ${darkMode ? 'bg-zinc-900' : 'bg-white'}`}>
                         <div className="mb-8">
                             <h3 className="text-sm uppercase tracking-wider font-bold mb-3 text-zinc-500">Message from Administrator:</h3>
-                            <div className="p-5 rounded-xl bg-amber-50 border border-amber-100 text-amber-900 text-lg leading-relaxed italic">
+                            <div className="p-5 rounded-xl bg-amber-50 border border-amber-100 text-amber-900 text-lg leading-relaxed italic mb-6">
                                 "{userInfo.verificationNotes || 'Please update your submitted documents.'}"
                             </div>
+
+                            {clarificationsHistory.length > 0 && (
+                                <div className="space-y-4 border-t border-zinc-200 dark:border-zinc-800 pt-6">
+                                    <h4 className="text-xs uppercase tracking-wider font-bold text-zinc-400">Clarification History & Log</h4>
+                                    <div className="space-y-3">
+                                        {clarificationsHistory.map((item, idx) => (
+                                            <div key={idx} className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50 space-y-2">
+                                                <div className="flex justify-between items-center text-xs text-zinc-500 font-semibold">
+                                                    <span>Round #{idx + 1}</span>
+                                                    <span>{new Date(item.requestedAt).toLocaleString()}</span>
+                                                </div>
+                                                <p className="text-sm font-semibold text-amber-600 dark:text-amber-400">
+                                                    Req: "{item.requestNotes}"
+                                                </p>
+                                                {item.responseNotes && (
+                                                    <p className="text-sm text-zinc-700 dark:text-zinc-300">
+                                                        Response ({item.respondedAt ? new Date(item.respondedAt).toLocaleDateString() : ''}): "{item.responseNotes}"
+                                                    </p>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex justify-end pt-4 border-t border-zinc-200 dark:border-zinc-800">
@@ -123,7 +150,7 @@ export default function ClarificationWrapper({ userInfo, darkMode, targetChildre
                                 className="flex items-center gap-2 px-8 py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold transition-all shadow-lg shadow-amber-500/20"
                             >
                                 <FileText size={20} />
-                                Fix Application Let's Go
+                                Fix Application & Re-submit
                             </button>
                         </div>
                     </div>

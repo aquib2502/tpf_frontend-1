@@ -38,11 +38,11 @@ export default function OrganizationProfileStep({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-zinc-300" : "text-zinc-700"}`}>
-                Annual Budget Range <span className="text-red-500">*</span>
+                Annual Turnover Range <span className="text-red-500">*</span>
               </label>
               <select
-                name="annualBudget"
-                value={formData.annualBudget}
+                name="annualTurnover"
+                value={formData.annualTurnover || formData.annualBudget}
                 onChange={handleInputChange}
                 className={`w-full px-4 py-2.5 rounded-lg border transition-colors ${
                   darkMode
@@ -50,7 +50,7 @@ export default function OrganizationProfileStep({
                     : "bg-white border-zinc-300 text-zinc-900 focus:border-emerald-600"
                 } focus:outline-none focus:ring-2 focus:ring-emerald-500/20`}
               >
-                <option value="">Select budget range</option>
+                <option value="">Select turnover range</option>
                 <option value="0-5L">₹0 - ₹5 Lakhs</option>
                 <option value="5L-25L">₹5 Lakhs - ₹25 Lakhs</option>
                 <option value="25L-1Cr">₹25 Lakhs - ₹1 Crore</option>
@@ -197,8 +197,8 @@ export default function OrganizationProfileStep({
                 Annual Turnover Range <span className="text-red-500">*</span>
               </label>
               <select
-                name="annualRevenue"
-                value={formData.annualRevenue}
+                name="annualTurnover"
+                value={formData.annualTurnover || formData.annualRevenue}
                 onChange={handleInputChange}
                 className={`w-full px-4 py-2.5 rounded-lg border transition-colors ${
                   darkMode
@@ -206,7 +206,7 @@ export default function OrganizationProfileStep({
                     : "bg-white border-zinc-300 text-zinc-900 focus:border-emerald-600"
                 } focus:outline-none focus:ring-2 focus:ring-emerald-500/20`}
               >
-                <option value="">Select revenue range</option>
+                <option value="">Select turnover range</option>
                 <option value="0-50L">₹0 - ₹50 Lakhs</option>
                 <option value="50L-1Cr">₹50 Lakhs - ₹1 Crore</option>
                 <option value="1Cr-5Cr">₹1 Crore - ₹5 Crores</option>

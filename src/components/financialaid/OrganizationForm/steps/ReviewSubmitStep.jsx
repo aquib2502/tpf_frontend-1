@@ -204,9 +204,9 @@ export default function ReviewSubmitStep({
           {isNGO ? (
             <>
               <div>
-                <p className="text-xs text-zinc-500">Annual Budget</p>
+                <p className="text-xs text-zinc-500">Annual Turnover</p>
                 <p className={`font-medium ${darkMode ? "text-white" : "text-zinc-900"}`}>
-                  {formData.annualBudget || "—"}
+                  {formData.annualTurnover || formData.annualBudget || "—"}
                 </p>
               </div>
               <div>
@@ -233,9 +233,9 @@ export default function ReviewSubmitStep({
           ) : (
             <>
               <div>
-                <p className="text-xs text-zinc-500">Annual Revenue</p>
+                <p className="text-xs text-zinc-500">Annual Turnover</p>
                 <p className={`font-medium ${darkMode ? "text-white" : "text-zinc-900"}`}>
-                  {formData.annualRevenue || "—"}
+                  {formData.annualTurnover || formData.annualRevenue || "—"}
                 </p>
               </div>
               <div>

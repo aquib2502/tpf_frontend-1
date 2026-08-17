@@ -440,8 +440,8 @@ export default function OrgDashboard({ darkModeFromParent }) {
           />
           <StatCard
             icon={TrendingUp}
-            label="Annual Revenue"
-            value={fmt.revenue(cd.annualRevenue)}
+            label="Annual Turnover"
+            value={fmt.revenue(cd.annualTurnover || cd.annualRevenue || org?.ngoDetails?.annualTurnover || org?.ngoDetails?.annualBudget)}
             gradient="from-blue-500 to-indigo-600"
             darkMode={darkMode}
           />

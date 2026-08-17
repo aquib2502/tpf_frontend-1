@@ -18,7 +18,7 @@ export default function OrganizationEditModal({ isOpen, onClose, section, org, o
         } else if (section === 'stats') {
             setFormData({
                 numberOfEmployees: org.companyDetails?.numberOfEmployees || org.ngoDetails?.employeeStrength,
-                annualRevenue: org.companyDetails?.annualRevenue || org.ngoDetails?.annualBudget,
+                annualTurnover: org.companyDetails?.annualTurnover || org.companyDetails?.annualRevenue || org.ngoDetails?.annualTurnover || org.ngoDetails?.annualBudget,
                 yearsInOperation: org.companyDetails?.yearsInOperation
             });
         } else if (section === 'personal') {
@@ -139,10 +139,10 @@ export default function OrganizationEditModal({ isOpen, onClose, section, org, o
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-semibold text-zinc-400">Annual Revenue / Budget</label>
+                                    <label className="text-sm font-semibold text-zinc-400">Annual Turnover</label>
                                     <select
-                                        value={formData.annualRevenue || ''}
-                                        onChange={(e) => setFormData({ ...formData, annualRevenue: e.target.value })}
+                                        value={formData.annualTurnover || formData.annualRevenue || ''}
+                                        onChange={(e) => setFormData({ ...formData, annualTurnover: e.target.value })}
                                         className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500"
                                     >
                                         <option value="0-50L">₹0 – 50 Lakhs</option>

@@ -90,8 +90,10 @@ export default function OrganizationRegistrationPage({ darkModeFromParent, isCla
     businessPanCard: null,
 
     // Step 4: Organization Profile
-    // For NGO
+    // Common Turnover Field
+    annualTurnover: "",
     annualBudget: "",
+    annualRevenue: "",
     donorDatabase: "",
     fullTimeFundraising: "",
     crowdfundedBefore: "",
@@ -100,7 +102,6 @@ export default function OrganizationRegistrationPage({ darkModeFromParent, isCla
     organizeEvents: "",
     
     // For Non-NGO
-    annualRevenue: "",
     numberOfEmployees: "",
     yearsInOperation: "",
     csr_initiatives: "",
@@ -223,11 +224,12 @@ export default function OrganizationRegistrationPage({ darkModeFromParent, isCla
         }
 
       case 4:
+        const hasTurnover = formData.annualTurnover || formData.annualBudget || formData.annualRevenue
         if (isNGO) {
-          return formData.annualBudget && formData.donorDatabase && formData.fullTimeFundraising && 
+          return hasTurnover && formData.donorDatabase && formData.fullTimeFundraising && 
                  formData.crowdfundedBefore && formData.employeeStrength
         } else {
-          return formData.annualRevenue && formData.numberOfEmployees && formData.yearsInOperation &&
+          return hasTurnover && formData.numberOfEmployees && formData.yearsInOperation &&
                  formData.csr_initiatives && formData.partnershipInterest
         }
 
