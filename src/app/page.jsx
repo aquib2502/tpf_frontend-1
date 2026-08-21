@@ -13,6 +13,7 @@ import { useCMS } from './CMSContext';
 import { useFetchImpactStatsQuery } from '@/utils/slices/campaignApiSlice';
 
 // 🔥 Lazy load ALL heavy sections
+const TrustedLogosSection = dynamic(() => import('@/components/home/TrustedLogosSection'), { ssr: false });
 const StoriesSection = dynamic(() => import('@/components/home/StoriesSection'), { ssr: false });
 const CampaignsSection = dynamic(() => import('@/components/home/CampaignsSection'), { ssr: false });
 const CuratedSection = dynamic(() => import('@/components/home/CuratedSection'), { ssr: false });
@@ -106,6 +107,12 @@ export default function Page() {
       </section>
 
       {/* 🔥 BELOW THE FOLD (Lazy Loaded) */}
+
+      <LazySection>
+        <section id="trusted-logos">
+          <TrustedLogosSection darkMode={darkMode} />
+        </section>
+      </LazySection>
 
       <LazySection>
         <section id="stories">

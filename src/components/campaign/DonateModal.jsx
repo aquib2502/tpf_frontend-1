@@ -153,7 +153,7 @@ export default function DonatePopUpModal({
       checkoutStartedRef.current = false;
       setCashfreeData(null);
       setSelectedAmount(100);
-      setSelectedPresetKey(campaignConfig ? 'flat-1' : null);
+      setSelectedPresetKey('flat-1');
       setCustomAmount('');
       setShowCustomAmountInput(false);
       setShowCustomTipInput(false);

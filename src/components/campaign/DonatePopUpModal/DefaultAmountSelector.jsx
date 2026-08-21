@@ -1,10 +1,11 @@
 'use client'
 
 const presetAmounts = [
-  { value: 50,  label: '₹50'  },
-  { value: 100, label: '₹100' },
-  { value: 200, label: '₹200' },
-  { value: 500, label: '₹500' },
+  { value: 50,   label: '₹50' },
+  { value: 100,  label: '₹100' },
+  { value: 200,  label: '₹200' },
+  { value: 500,  label: '₹500' },
+  { value: 1000, label: '₹1,000' },
 ];
 
 export default function DefaultAmountSelector({
@@ -19,8 +20,8 @@ export default function DefaultAmountSelector({
   const dk = darkMode;
 
   const activeCls = dk
-    ? 'bg-emerald-500/25 border-emerald-400/70 text-emerald-300 font-extrabold'
-    : 'bg-emerald-100 border-emerald-400 text-emerald-800 font-extrabold';
+    ? 'bg-emerald-500/25 border-emerald-400/70 text-emerald-300 font-extrabold shadow-sm'
+    : 'bg-emerald-100 border-emerald-400 text-emerald-900 font-extrabold shadow-sm';
 
   const inactiveCls = dk
     ? 'bg-zinc-900/60 border-zinc-600 text-zinc-300 hover:border-zinc-500 hover:text-zinc-200 font-bold'
@@ -40,22 +41,25 @@ export default function DefaultAmountSelector({
 
   return (
     <div className="space-y-2">
-      <div className="grid grid-cols-5 gap-1.5">
-        {presetAmounts.map((amt) => (
-          <button
-            key={amt.value}
-            onClick={() => {
-              setSelectedAmount(amt.value);
-              setCustomAmount('');
-              setShowCustomAmountInput(false);
-            }}
-            className={`h-8 rounded-lg font-extrabold text-xs transition-colors border ${
-              selectedAmount === amt.value && !customAmount ? activeCls : inactiveCls
-            }`}
-          >
-            {amt.label}
-          </button>
-        ))}
+      <div className="grid grid-cols-3 gap-1.5">
+        {presetAmounts.map((amt) => {
+          const isActive = (selectedAmount === amt.value || Number(selectedAmount) === Number(amt.value)) && !customAmount;
+          return (
+            <button
+              key={amt.value}
+              onClick={() => {
+                setSelectedAmount(amt.value);
+                setCustomAmount('');
+                setShowCustomAmountInput(false);
+              }}
+              className={`h-8 rounded-lg font-extrabold text-xs transition-colors border ${
+                isActive ? activeCls : inactiveCls
+              }`}
+            >
+              {amt.label}
+            </button>
+          );
+        })}
 
         <button
           onClick={handleOtherClick}
@@ -63,7 +67,7 @@ export default function DefaultAmountSelector({
             showCustomAmountInput || customAmount ? activeCls : inactiveCls
           }`}
         >
-          {customAmount && !showCustomAmountInput ? `₹${customAmount}` : 'Other'}
+          {customAmount && !showCustomAmountInput ? `₹${parseInt(customAmount).toLocaleString('en-IN')}` : 'Other'}
         </button>
       </div>
 

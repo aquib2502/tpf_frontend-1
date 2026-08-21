@@ -141,16 +141,20 @@ export default function CampaignAmountSelector({
 
   const flatPresets = isUnitMode
     ? [
-        { amount: 50,  label: '₹50',  qty: 0 },
-        { amount: 100, label: '₹100', qty: 0 },
-        // append any DB flat presets that aren't 50/100
-        ...flatPresetsFromDB.filter((p) => ![50, 100].includes(p.amount)),
+        { amount: 50,   label: '₹50',    qty: 0 },
+        { amount: 100,  label: '₹100',   qty: 0 },
+        { amount: 200,  label: '₹200',   qty: 0 },
+        { amount: 500,  label: '₹500',   qty: 0 },
+        { amount: 1000, label: '₹1,000', qty: 0 },
+        // append any DB flat presets that aren't in the default set
+        ...flatPresetsFromDB.filter((p) => ![50, 100, 200, 500, 1000].includes(p.amount)),
       ]
     : (flatPresetsFromDB.length ? flatPresetsFromDB : [
-        { amount: 50,  label: '₹50',  qty: 0 },
-        { amount: 100, label: '₹100', qty: 0 },
-        { amount: 200, label: '₹200', qty: 0 },
-        { amount: 500, label: '₹500', qty: 0 },
+        { amount: 50,   label: '₹50',    qty: 0 },
+        { amount: 100,  label: '₹100',   qty: 0 },
+        { amount: 200,  label: '₹200',   qty: 0 },
+        { amount: 500,  label: '₹500',   qty: 0 },
+        { amount: 1000, label: '₹1,000', qty: 0 },
       ]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
@@ -166,8 +170,8 @@ export default function CampaignAmountSelector({
     setShowCustomAmountInput(next);
     if (!next) {
       setCustomAmount('');
-      setSelectedAmount(flatPresets[0]?.amount || 50);
-      setSelectedPresetKey('flat-0');
+      setSelectedAmount(flatPresets[1]?.amount || 100);
+      setSelectedPresetKey('flat-1');
     } else {
       setSelectedAmount(null);
       setCustomAmount('');
@@ -197,7 +201,7 @@ export default function CampaignAmountSelector({
       <div className="grid grid-cols-3 gap-1.5">
         {flatPresets.map((preset, i) => {
           const key      = `flat-${i}`;
-          const isActive = selectedPresetKey === key && !customAmount;
+          const isActive = (selectedPresetKey ? (selectedPresetKey === key || Number(selectedAmount) === Number(preset.amount)) : (Number(selectedAmount) === Number(preset.amount))) && !customAmount;
           return (
             <button
               key={key}

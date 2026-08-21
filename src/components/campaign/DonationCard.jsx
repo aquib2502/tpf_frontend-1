@@ -130,10 +130,8 @@ export default function DonationCard({
 
   /* ── Set initial preset key when campaign config loads ───────────────── */
   useEffect(() => {
-    if (campaignConfig) {
-      setSelectedAmount(100);
-      setSelectedPresetKey('flat-1');
-    }
+    setSelectedAmount(100);
+    setSelectedPresetKey('flat-1');
   }, [resolvedSlug]);
 
   /* ── Derived amounts ──────────────────────────────────────────────────── */
