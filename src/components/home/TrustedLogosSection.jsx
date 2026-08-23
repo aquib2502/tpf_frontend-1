@@ -45,7 +45,7 @@ export default function TrustedLogosSection({ darkMode }) {
           }`} />
           <span className="text-xs sm:text-sm font-extrabold uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            Trusted & Recognized By
+            Institutional Network
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           </span>
           <div className={`h-[1px] w-12 sm:w-28 ${
