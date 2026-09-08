@@ -5,17 +5,22 @@ import { motion, AnimatePresence } from "framer-motion"
 import {
     User, Mail, Phone, MapPin, Briefcase, ChevronRight,
     Check, ArrowRight, AlertCircle, Globe, Award, Heart,
-    ShieldCheck, Star, Users, Flame, ArrowLeft, X, Search as SearchIcon
+    ShieldCheck, Star, Users, Flame, ArrowLeft, X, Search as SearchIcon,
+    Droplet, Building, CheckSquare, Sparkles
 } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useSelector, useDispatch } from "react-redux"
 import { useRegisterVolunteerMutation } from "@/utils/slices/authApiSlice"
+import { setCredentials } from "@/utils/slices/authSlice"
 import { useAppToast } from "@/app/AppToastContext"
 import { useLocationData } from "@/utils/hooks/useLocationData"
 
 export default function VolunteerRegister({ darkMode }) {
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const communityParam = searchParams ? searchParams.get("community") : null
+
     const dispatch = useDispatch()
     const userInfo = useSelector((state) => state.auth.userInfo)
     const [registerVolunteer] = useRegisterVolunteerMutation()
@@ -39,9 +44,14 @@ export default function VolunteerRegister({ darkMode }) {
         gender: "",
         state: "",
         city: "",
+        pincode: "",
+        address: "",
         expertise: "",
         customExpertise: "",
-        helpDescription: ""
+        helpDescription: "",
+        community: communityParam || "",
+        bloodGroup: "",
+        consentGiven: false
     })
 
     const helpWordCount = formData.helpDescription.trim() ? formData.helpDescription.trim().split(/\s+/).length : 0;
@@ -62,13 +72,17 @@ export default function VolunteerRegister({ darkMode }) {
         if (userInfo) {
             setFormData(prev => ({
                 ...prev,
-                fullName: userInfo.fullName || "",
-                email: userInfo.email || "",
-                phone: userInfo.mobileNo || "",
-                gender: userInfo.gender || "",
-                state: userInfo.kycDetails?.state || "",
-                city: userInfo.kycDetails?.city || "",
-                expertise: userInfo.profession || ""
+                fullName: userInfo.fullName || prev.fullName,
+                email: userInfo.email || prev.email,
+                phone: userInfo.mobileNo || prev.phone,
+                gender: userInfo.gender || prev.gender,
+                state: userInfo.kycDetails?.state || prev.state,
+                city: userInfo.kycDetails?.city || prev.city,
+                pincode: userInfo.kycDetails?.pincode || prev.pincode,
+                address: userInfo.address || userInfo.kycDetails?.address || prev.address,
+                expertise: userInfo.profession || prev.expertise,
+                bloodGroup: userInfo.bloodGroup || prev.bloodGroup,
+                consentGiven: userInfo.consentGiven !== undefined ? userInfo.consentGiven : prev.consentGiven
             }))
         }
     }, [userInfo])
@@ -114,6 +128,8 @@ export default function VolunteerRegister({ darkMode }) {
         e.preventDefault()
         setLoading(true)
 
+        const activeCommunity = formData.community || communityParam;
+
         if (!formData.fullName || !formData.email || !formData.phone || !formData.gender || !formData.state || !formData.city || !formData.expertise || !formData.helpDescription) {
             showToast({
                 title: "Incomplete Form",
@@ -122,6 +138,36 @@ export default function VolunteerRegister({ darkMode }) {
             })
             setLoading(false)
             return
+        }
+
+        if (activeCommunity === "Blood Donors") {
+            if (!formData.bloodGroup) {
+                showToast({
+                    title: "Blood Group Required",
+                    message: "Please select your blood group",
+                    type: "warning"
+                })
+                setLoading(false)
+                return
+            }
+            if (!formData.address) {
+                showToast({
+                    title: "Detailed Address Required",
+                    message: "Please enter your street address to locate you for blood requests",
+                    type: "warning"
+                })
+                setLoading(false)
+                return
+            }
+            if (!formData.consentGiven) {
+                showToast({
+                    title: "Consent Required",
+                    message: "Please check the consent box to allow TPF to contact you for blood donations",
+                    type: "warning"
+                })
+                setLoading(false)
+                return
+            }
         }
 
         if (formData.expertise === "Other" && !formData.customExpertise) {
@@ -147,26 +193,46 @@ export default function VolunteerRegister({ darkMode }) {
         try {
             const professionToUpdate = formData.expertise === "Other" ? formData.customExpertise : formData.expertise;
 
-            await registerVolunteer({
+            const res = await registerVolunteer({
                 fullName: formData.fullName,
                 email: formData.email,
                 mobileNo: formData.phone,
                 gender: formData.gender,
                 state: formData.state,
                 city: formData.city,
+                pincode: formData.pincode,
+                address: formData.address,
                 profession: professionToUpdate,
-                helpDescription: formData.helpDescription
+                helpDescription: formData.helpDescription,
+                community: activeCommunity,
+                bloodGroup: formData.bloodGroup,
+                consentGiven: formData.consentGiven
             }).unwrap()
+
+            if (res?.user) {
+                dispatch(setCredentials({
+                    ...(userInfo || {}),
+                    ...res.user,
+                    type: "user"
+                }))
+            }
 
             showToast({
                 title: "Welcome to the Circle!",
-                message: "You're now a certified TPF Volunteer.",
+                message: activeCommunity 
+                    ? `You've joined the ${activeCommunity} community as a certified TPF Volunteer.`
+                    : "You're now a certified TPF Volunteer.",
                 type: "success",
                 duration: 3000
             })
 
             setTimeout(() => {
-                router.push("/login")
+                if (userInfo) {
+                    const slug = activeCommunity ? activeCommunity.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+                    router.push(slug ? `/community/${slug}` : '/#communities')
+                } else {
+                    router.push("/login")
+                }
             }, 2500)
         } catch (error) {
             console.error("Volunteer Reg Error:", error)
@@ -466,15 +532,29 @@ export default function VolunteerRegister({ darkMode }) {
                             {/* Form Decorative Element */}
                             <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/5 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
 
-                            <div className="flex items-center justify-between mb-12">
+                            <div className="flex items-center justify-between mb-8">
                                 <div>
                                     <h2 className="text-3xl font-black mb-2 flex items-center gap-3">
                                         Enrollment Form
                                     </h2>
                                     <div className="h-1.5 w-24 bg-gradient-to-r from-emerald-500 to-[#D4AF37] rounded-full" />
                                 </div>
-
                             </div>
+
+                            {(formData.community || communityParam) && (
+                                <div className={`p-4 rounded-2xl border mb-8 flex items-center justify-between ${
+                                    darkMode ? 'bg-emerald-950/40 border-emerald-800 text-emerald-300' : 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                                }`}>
+                                    <div className="flex items-center gap-3">
+                                        <Sparkles className="w-5 h-5 text-emerald-500" />
+                                        <div>
+                                            <p className="text-[10px] font-bold uppercase tracking-wider opacity-80">Joining Community</p>
+                                            <p className="text-lg font-extrabold">{formData.community || communityParam}</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-xs px-3 py-1 bg-emerald-600 text-white rounded-full font-bold">Community Member</span>
+                                </div>
+                            )}
 
                             <form onSubmit={handleSubmit} className="space-y-8">
                                 <div className="grid md:grid-cols-2 gap-8">
@@ -538,7 +618,7 @@ export default function VolunteerRegister({ darkMode }) {
                                         </div>
                                     </div>
 
-                                    {/* Gender (Identity) Selector */}
+                                    {/* Gender Selector */}
                                     <div className="space-y-3">
                                         <label className={`text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${darkMode ? 'text-zinc-500' : 'text-gray-600'}`}>
                                             <Check size={14} className="text-[#D4AF37]" /> Identity
@@ -621,6 +701,95 @@ export default function VolunteerRegister({ darkMode }) {
                                             items={cities}
                                             onSelect={handleCitySelect}
                                         />
+                                    </div>
+
+                                    {/* Pincode */}
+                                    <div className="space-y-3">
+                                        <label className={`text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${darkMode ? 'text-zinc-500' : 'text-gray-600'}`}>
+                                            <Building size={14} className="text-[#D4AF37]" /> Postal Pincode
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="pincode"
+                                            value={formData.pincode}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, pincode: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
+                                            placeholder="e.g. 400001"
+                                            className={`w-full px-6 py-4 rounded-2xl border-2 outline-none transition-all font-medium ${darkMode
+                                                ? 'bg-zinc-800/50 border-zinc-700/50 focus:border-[#D4AF37] text-white focus:bg-zinc-800'
+                                                : 'bg-gray-50 border-gray-100 focus:border-[#D4AF37] text-gray-900 focus:bg-white focus:shadow-md'
+                                                }`}
+                                        />
+                                    </div>
+
+                                    {/* Blood Group Selector (if Blood Donors) */}
+                                    {(formData.community === "Blood Donors" || communityParam === "Blood Donors") && (
+                                        <div className="space-y-3">
+                                            <label className={`text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${darkMode ? 'text-zinc-500' : 'text-gray-600'}`}>
+                                                <Droplet size={14} className="text-red-500 fill-red-500" /> Blood Group <span className="text-red-500">*</span>
+                                            </label>
+                                            <button
+                                                type="button"
+                                                onClick={() => setOpenDropdown('bloodGroup')}
+                                                className={`w-full px-6 py-4 rounded-2xl border-2 outline-none transition-all font-medium text-left flex justify-between items-center ${darkMode
+                                                    ? 'bg-zinc-800/50 border-zinc-700/50 hover:border-red-500/50'
+                                                    : 'bg-gray-50 border-gray-100 hover:border-red-500/50'
+                                                    }`}
+                                            >
+                                                <span className={!formData.bloodGroup ? (darkMode ? 'text-zinc-500' : 'text-gray-400') : 'text-red-500 font-bold'}>
+                                                    {formData.bloodGroup || "Select Blood Group"}
+                                                </span>
+                                                <ChevronRight className="w-5 h-5 text-red-500" />
+                                            </button>
+                                            <SearchPicker
+                                                isOpen={openDropdown === 'bloodGroup'}
+                                                onClose={() => setOpenDropdown(null)}
+                                                title="Select Blood Group"
+                                                showSearch={false}
+                                                items={["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]}
+                                                onSelect={(val) => setFormData(prev => ({ ...prev, bloodGroup: val }))}
+                                            />
+                                        </div>
+                                    )}
+
+                                    {/* Detailed Address */}
+                                    <div className="md:col-span-2 space-y-3">
+                                        <label className={`text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${darkMode ? 'text-zinc-500' : 'text-gray-600'}`}>
+                                            <MapPin size={14} className="text-[#D4AF37]" /> Full Street Address {(formData.community === "Blood Donors" || communityParam === "Blood Donors") && <span className="text-red-500">*</span>}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="address"
+                                            value={formData.address}
+                                            onChange={handleInputChange}
+                                            placeholder="Flat/House No., Street, Area locality to accurately locate you for requests"
+                                            className={`w-full px-6 py-4 rounded-2xl border-2 outline-none transition-all font-medium ${darkMode
+                                                ? 'bg-zinc-800/50 border-zinc-700/50 focus:border-[#D4AF37] text-white focus:bg-zinc-800'
+                                                : 'bg-gray-50 border-gray-100 focus:border-[#D4AF37] text-gray-900 focus:bg-white focus:shadow-md'
+                                                }`}
+                                            required={formData.community === "Blood Donors" || communityParam === "Blood Donors"}
+                                        />
+                                    </div>
+
+                                    {/* Consent Checkbox */}
+                                    <div className="md:col-span-2">
+                                        <label className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all ${
+                                            formData.consentGiven
+                                                ? (darkMode ? 'bg-emerald-950/40 border-emerald-700' : 'bg-emerald-50/80 border-emerald-300')
+                                                : (darkMode ? 'bg-zinc-800/30 border-zinc-700/50' : 'bg-gray-50 border-gray-200')
+                                        }`}>
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.consentGiven}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, consentGiven: e.target.checked }))}
+                                                className="mt-1 w-5 h-5 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 cursor-pointer"
+                                            />
+                                            <div className="text-xs leading-relaxed">
+                                                <span className="font-bold block mb-0.5 text-emerald-600">Consent for TPF Communication & Donation Alerts</span>
+                                                <span className={darkMode ? 'text-zinc-300' : 'text-gray-600'}>
+                                                    I hereby consent to True Path Foundation (TPF) contacting me via Call, SMS, or WhatsApp for donation requests, emergency community alerts, and volunteer coordination.
+                                                </span>
+                                            </div>
+                                        </label>
                                     </div>
 
                                     {/* Primary Expertise Selector */}
