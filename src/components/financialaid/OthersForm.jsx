@@ -77,6 +77,9 @@ export default function OtherForm({ darkModeFromParent }) {
     maritalStatus: '',
     gender: '',
     numberOfDependents: '', // Moved here
+    beneficiaryIdType: '',
+    beneficiaryGovIdNumber: '',
+    beneficiaryGovIdDocument: null,
 
     // Address (Step 3)
     permanentAddress: '',
@@ -109,7 +112,7 @@ export default function OtherForm({ darkModeFromParent }) {
     if (showDraftPrompt) return
 
     const hasData = Object.entries(formData).some(([key, val]) => {
-      if (['govIdDocument', 'bankStatement', 'supportingDocuments', 'supportingPictures', 'declarationAccepted', 'assistanceCheck', 'termsAccepted', 'sameAddress', 'noIncome'].includes(key)) return false;
+      if (['govIdDocument', 'beneficiaryGovIdDocument', 'bankStatement', 'supportingDocuments', 'supportingPictures', 'declarationAccepted', 'assistanceCheck', 'termsAccepted', 'sameAddress', 'noIncome'].includes(key)) return false;
       return val !== '' && val !== null && val !== undefined;
     });
     if (!hasData) return
@@ -118,6 +121,7 @@ export default function OtherForm({ darkModeFromParent }) {
     const delayDebounce = setTimeout(() => {
       const cleanData = { ...formData }
       delete cleanData.govIdDocument
+      delete cleanData.beneficiaryGovIdDocument
       delete cleanData.bankStatement
       delete cleanData.supportingDocuments
       delete cleanData.supportingPictures
@@ -176,6 +180,22 @@ export default function OtherForm({ darkModeFromParent }) {
       return;
     }
 
+    // Special handling for beneficiaryGovIdNumber
+    if (name === 'beneficiaryGovIdNumber') {
+      let formattedValue = value.toUpperCase();
+      if (formData.beneficiaryIdType === 'aadhar') {
+        formattedValue = formattedValue.replace(/\D/g, '').substring(0, 12);
+        formattedValue = formattedValue.replace(/(\d{4})(?=\d)/g, '$1-');
+      } else if (formData.beneficiaryIdType === 'pan') {
+        formattedValue = formattedValue.replace(/[^A-Z0-9]/g, '').substring(0, 10);
+      }
+      setFormData((prev) => ({
+        ...prev,
+        [name]: formattedValue,
+      }));
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -185,7 +205,7 @@ export default function OtherForm({ darkModeFromParent }) {
 
   const requiredFields = {
     1: ["fullName", "relation", "contactNumber", "idType", "govIdNumber", "govIdDocument", "declarationAccepted", "assistanceCheck", "termsAccepted"],
-    2: ["relationName", "dateOfBirth", "maritalStatus", "gender", "numberOfDependents"],
+    2: ["relationName", "dateOfBirth", "maritalStatus", "gender", "numberOfDependents", "beneficiaryIdType", "beneficiaryGovIdNumber", "beneficiaryGovIdDocument"],
     3: ["currentAddress", "permanentAddress"],
     4: ["occupation", "monthlyIncome", "bankNameBranch", "accountNumber", "ifscCode", "bankStatement"],
     5: ["aidType", "hardshipDescription"],
@@ -259,6 +279,8 @@ export default function OtherForm({ darkModeFromParent }) {
       formDataToSend.append('email', formData.email)
       formDataToSend.append('idType', formData.idType)
       formDataToSend.append('govIdNumber', formData.govIdNumber)
+      formDataToSend.append('beneficiaryIdType', formData.beneficiaryIdType)
+      formDataToSend.append('beneficiaryGovIdNumber', formData.beneficiaryGovIdNumber)
       formDataToSend.append('occupation', formData.occupation)
       formDataToSend.append('monthlyIncome', formData.noIncome ? '0' : formData.monthlyIncome)
       formDataToSend.append('noIncome', formData.noIncome)
@@ -273,6 +295,9 @@ export default function OtherForm({ darkModeFromParent }) {
       // Add file uploads
       if (formData.govIdDocument) {
         formDataToSend.append('govIdDocument', formData.govIdDocument)
+      }
+      if (formData.beneficiaryGovIdDocument) {
+        formDataToSend.append('beneficiaryGovIdDocument', formData.beneficiaryGovIdDocument)
       }
       if (formData.bankStatement) {
         formDataToSend.append('bankStatement', formData.bankStatement)
@@ -1030,6 +1055,133 @@ export default function OtherForm({ darkModeFromParent }) {
                         }`}
                       required
                     />
+                  </div>
+                </div>
+
+                {/* Beneficiary ID Type Selection */}
+                <div className="col-span-1 md:col-span-2 space-y-3 pt-2">
+                  <label className={`block text-sm font-medium ${darkMode ? "text-zinc-300" : "text-zinc-700"}`}>
+                    Select Beneficiary ID Type <span className="text-red-500">*</span>
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <label className="cursor-pointer">
+                      <input
+                        type="radio"
+                        name="beneficiaryIdType"
+                        value="pan"
+                        checked={formData.beneficiaryIdType === 'pan'}
+                        onChange={handleInputChange}
+                        className="peer sr-only"
+                        required
+                      />
+                      <div className={`p-4 rounded-lg border-2 transition-all peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:dark:bg-emerald-950/30 ${darkMode
+                        ? "border-zinc-600 bg-zinc-700 hover:border-zinc-500"
+                        : "border-zinc-300 bg-white hover:border-zinc-400"
+                        }`}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <CreditCard className={`w-5 h-5 ${formData.beneficiaryIdType === 'pan' ? 'text-emerald-600' : darkMode ? 'text-zinc-400' : 'text-zinc-500'}`} />
+                            <div>
+                              <p className={`font-semibold ${darkMode ? "text-white" : "text-zinc-900"}`}>PAN Card</p>
+                              <p className={`text-xs ${darkMode ? "text-zinc-500" : "text-zinc-500"}`}>10 characters</p>
+                            </div>
+                          </div>
+                          {formData.beneficiaryIdType === 'pan' && (
+                            <div className="w-5 h-5 rounded-md bg-emerald-600 flex items-center justify-center">
+                              <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </label>
+
+                    <label className="cursor-pointer">
+                      <input
+                        type="radio"
+                        name="beneficiaryIdType"
+                        value="aadhar"
+                        checked={formData.beneficiaryIdType === 'aadhar'}
+                        onChange={handleInputChange}
+                        className="peer sr-only"
+                        required
+                      />
+                      <div className={`p-4 rounded-lg border-2 transition-all peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:dark:bg-emerald-950/30 ${darkMode
+                        ? "border-zinc-600 bg-zinc-700 hover:border-zinc-500"
+                        : "border-zinc-300 bg-white hover:border-zinc-400"
+                        }`}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <CreditCard className={`w-5 h-5 ${formData.beneficiaryIdType === 'aadhar' ? 'text-emerald-600' : darkMode ? 'text-zinc-400' : 'text-zinc-500'}`} />
+                            <div>
+                              <p className={`font-semibold ${darkMode ? "text-white" : "text-zinc-900"}`}>Aadhar Card</p>
+                              <p className={`text-xs ${darkMode ? "text-zinc-500" : "text-zinc-500"}`}>12 digits</p>
+                            </div>
+                          </div>
+                          {formData.beneficiaryIdType === 'aadhar' && (
+                            <div className="w-5 h-5 rounded-md bg-emerald-600 flex items-center justify-center">
+                              <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Beneficiary ID Input */}
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-zinc-300" : "text-zinc-700"}`}>
+                      {formData.beneficiaryIdType === "pan" ? "Beneficiary PAN Number" : formData.beneficiaryIdType === "aadhar" ? "Beneficiary Aadhar Number" : "Beneficiary Government ID Number"} <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <CreditCard className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? "text-zinc-500" : "text-zinc-400"}`} />
+                      <input
+                        type="text"
+                        name="beneficiaryGovIdNumber"
+                        value={formData.beneficiaryGovIdNumber}
+                        onChange={handleInputChange}
+                        placeholder={formData.beneficiaryIdType === "pan" ? "ABCDE1234F" : formData.beneficiaryIdType === "aadhar" ? "1234-5678-9012" : "Enter ID Number"}
+                        maxLength={formData.beneficiaryIdType === "pan" ? 10 : formData.beneficiaryIdType === "aadhar" ? 14 : 20}
+                        disabled={!formData.beneficiaryIdType}
+                        className={`w-full pl-11 pr-4 py-3 rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 ${!formData.beneficiaryIdType ? "opacity-50 cursor-not-allowed bg-gray-100 dark:bg-zinc-800" : ""} ${darkMode
+                          ? "bg-zinc-700 border-zinc-600 text-white placeholder-zinc-500"
+                          : "bg-white border-zinc-300 text-zinc-900 placeholder-zinc-400"
+                          }`}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Beneficiary ID Document Upload */}
+                  <div>
+                    <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-zinc-300" : "text-zinc-700"}`}>
+                      Upload Beneficiary {formData.beneficiaryIdType === 'pan' ? 'PAN Card' : formData.beneficiaryIdType === 'aadhar' ? 'Aadhar Card' : 'Government ID'} <span className="text-red-500">*</span>
+                    </label>
+                    <div className={`relative border-2 border-dashed rounded-lg p-4 transition-all hover:border-emerald-500 ${darkMode ? "border-zinc-600 bg-zinc-700/50" : "border-zinc-300 bg-zinc-50"}`}>
+                      <input
+                        type="file"
+                        name="beneficiaryGovIdDocument"
+                        onChange={handleInputChange}
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        disabled={!formData.beneficiaryIdType}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                        required
+                      />
+                      <div className="flex items-center gap-3 pointer-events-none">
+                        <div className={`p-2 rounded-lg ${darkMode ? "bg-zinc-600" : "bg-white border border-zinc-200"}`}>
+                          <Upload className={`w-5 h-5 ${darkMode ? "text-zinc-400" : "text-zinc-500"}`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-medium truncate ${darkMode ? "text-zinc-300" : "text-zinc-700"}`}>
+                            {formData.beneficiaryGovIdDocument ? formData.beneficiaryGovIdDocument.name : "Choose file..."}
+                          </p>
+                          <p className={`text-xs ${darkMode ? "text-zinc-500" : "text-zinc-500"}`}>
+                            PDF, JPG up to 5MB
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
