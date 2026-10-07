@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Download, RotateCcw, TrendingUp, Minus, Scale, Calculator, Sparkles, Info, BookOpen, CheckCircle2, XCircle } from 'lucide-react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useSoftSignupMutation } from '@/utils/slices/authApiSlice';
+import { setCredentials } from '@/utils/slices/authSlice';
 import { useAppToast } from '@/app/AppToastContext';
 import generateZakatPDF from '@/utils/generateZakatPDF';
 import GuestDetailsModal from './GuestDetailsModal'; // ← adjust path if needed
@@ -34,6 +35,7 @@ const InfoCallout = ({ icon: Icon, title, body, colorClass = 'blue', darkMode = 
 
 const Results = ({ results, onReset, formatCurrency, darkMode = false }) => {
   const userInfo = useSelector((state) => state.auth.userInfo);
+  const dispatch = useDispatch();
   const { showToast } = useAppToast();
   const [softSignup] = useSoftSignupMutation();
 
@@ -62,7 +64,18 @@ const Results = ({ results, onReset, formatCurrency, darkMode = false }) => {
   /* ── Download button handler ─────────────────────────────────────────── */
   const handleDownloadClick = async () => {
     if (userInfo) {
-      await saveZakatCalculation(results.zakatDue);
+      const userId = userInfo._id || userInfo.userId;
+      await saveZakatCalculation(results.zakatDue, userId);
+      if (userId) {
+        dispatch(setCredentials({
+          ...userInfo,
+          totalZakatCalculated: results.zakatDue,
+          donationStats: {
+            ...(userInfo.donationStats || {}),
+            totalZakatCalculated: results.zakatDue,
+          },
+        }));
+      }
       // Already logged in — download immediately
       generateZakatPDF(results, formatCurrency, userInfo?.fullName || '');
       setHasDownloaded(true);
@@ -71,17 +84,17 @@ const Results = ({ results, onReset, formatCurrency, darkMode = false }) => {
       setShowGuestModal(true);
     }
   };
-  const saveZakatCalculation = async (zakatDue, userId) => {
+  const saveZakatCalculation = async (zakatDue, userId, nisaabDate) => {
     try {
-
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/zakat/calculate-zakat`,
         {
           zakatDue,
-          userId
-        }
+          userId,
+          nisaabDate: nisaabDate || undefined,
+        },
+        { withCredentials: true }
       );
-
     } catch (error) {
       console.error("Failed to save zakat calculation:", error);
     }
@@ -95,7 +108,7 @@ const Results = ({ results, onReset, formatCurrency, darkMode = false }) => {
       const result = await softSignup({ fullName, email, mobileNo, nisaabDate }).unwrap();
       if (!result?.data?.userId) throw new Error('Could not identify user');
       const userId = result.data.userId;
-      await saveZakatCalculation(results.zakatDue,userId);
+      await saveZakatCalculation(results.zakatDue, userId, nisaabDate);
       // 2. Download the PDF
       generateZakatPDF(results, formatCurrency, fullName);
       setHasDownloaded(true);

@@ -256,6 +256,9 @@ export default function DonatePopUpModal({
       }
       // Reset the checkout gate so the new session triggers properly
       checkoutStartedRef.current = false;
+      if (typeof window !== 'undefined' && resolvedSlug) {
+        sessionStorage.setItem('last_donated_campaign_slug', resolvedSlug);
+      }
       setCashfreeData(data.cashfree);
     } catch (err) {
       console.error('Donation initiate failed', err);

@@ -209,7 +209,7 @@ export default function VolunteerRegister({ darkMode }) {
                 consentGiven: formData.consentGiven
             }).unwrap()
 
-            if (res?.user) {
+            if (userInfo && res?.user) {
                 dispatch(setCredentials({
                     ...(userInfo || {}),
                     ...res.user,
@@ -218,12 +218,14 @@ export default function VolunteerRegister({ darkMode }) {
             }
 
             showToast({
-                title: "Welcome to the Circle!",
-                message: activeCommunity 
-                    ? `You've joined the ${activeCommunity} community as a certified TPF Volunteer.`
-                    : "You're now a certified TPF Volunteer.",
+                title: userInfo ? "Welcome to the Circle!" : "Registration Submitted!",
+                message: userInfo
+                    ? (activeCommunity 
+                        ? `You've joined the ${activeCommunity} community as a certified TPF Volunteer.`
+                        : "You're now a certified TPF Volunteer.")
+                    : "Volunteer registration successful! Please log in with your phone and OTP to access your account.",
                 type: "success",
-                duration: 3000
+                duration: 3500
             })
 
             setTimeout(() => {

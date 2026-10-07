@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAppToast } from "@/app/AppToastContext";
 import {
   User,
   Heart,
@@ -104,6 +105,7 @@ const SidebarContent = memo(({ onClose, darkMode, profileCompletion, role }) => 
   const [mounted, setMounted] = useState(false);
 
   const router = useRouter();
+  const { showToast } = useAppToast();
   const firstIncomplete = filteredMenuItems.find((i) => i.incomplete);
 
   useEffect(() => setMounted(true), []);
@@ -216,7 +218,24 @@ const SidebarContent = memo(({ onClose, darkMode, profileCompletion, role }) => 
             const Icon = item.icon;
 
             return (
-              <Link key={item.path} href={item.path} className="block">
+              <Link
+                key={item.path}
+                href={item.path}
+                className="block"
+                onClick={(e) => {
+                  if (isActive) {
+                    e.preventDefault();
+                    router.refresh();
+                    showToast({
+                      title: "Already Here",
+                      message: `You are already viewing ${item.name}.`,
+                      type: "info",
+                      duration: 2500,
+                    });
+                  }
+                  onClose?.();
+                }}
+              >
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}

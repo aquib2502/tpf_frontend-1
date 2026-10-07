@@ -37,7 +37,7 @@ export default function OfflineDonationsPage({ darkModeFromParent }) {
   const [selectedMethod, setSelectedMethod] = useState(null)
   const [showSuccess, setShowSuccess] = useState(false)
   const [isClient, setIsClient] = useState(false);
-  const { data: campaignData } = useGetCampaignDropdownQuery();
+  const { data: campaignData, isLoading: campaignsLoading } = useGetCampaignDropdownQuery();
   const campaigns = campaignData?.campaigns || [];
   useEffect(() => {
     setIsClient(true);
@@ -199,7 +199,7 @@ export default function OfflineDonationsPage({ darkModeFromParent }) {
   // Shared select className — NO appearance-none so native mobile dropdown works
   const selectClass = (extra = "") =>
     `w-full pl-12 pr-4 py-3 rounded-xl border-2 outline-none transition-all ${darkMode
-      ? "bg-zinc-800/50 border-zinc-700 text-white focus:border-emerald-500"
+      ? "bg-zinc-800 border-zinc-700 text-white focus:border-emerald-500"
       : "bg-white border-gray-200 text-gray-900 focus:border-emerald-500"
     } ${extra}`
 
@@ -677,12 +677,12 @@ export default function OfflineDonationsPage({ darkModeFromParent }) {
                                 onChange={handleInputChange}
                                 className={selectClass()}
                               >
-                                <option value="">Select donation type</option>
-                                <option value="ZAKAAT">ZAKAAT</option>
-                                <option value="LILLAH">LILLAH</option>
-                                <option value="IMDAD">IMDAD</option>
-                                <option value="SADAQAH">SADAQAH</option>
-                                <option value="RIBA">RIBA</option>
+                                <option value="" className="text-gray-900 bg-white dark:bg-zinc-800 dark:text-white">Select donation type</option>
+                                <option value="ZAKAAT" className="text-gray-900 bg-white dark:bg-zinc-800 dark:text-white">ZAKAAT</option>
+                                <option value="LILLAH" className="text-gray-900 bg-white dark:bg-zinc-800 dark:text-white">LILLAH</option>
+                                <option value="IMDAD" className="text-gray-900 bg-white dark:bg-zinc-800 dark:text-white">IMDAD</option>
+                                <option value="SADAQAH" className="text-gray-900 bg-white dark:bg-zinc-800 dark:text-white">SADAQAH</option>
+                                <option value="RIBA" className="text-gray-900 bg-white dark:bg-zinc-800 dark:text-white">RIBA</option>
                               </select>
                             </div>
                           </div>
@@ -706,9 +706,11 @@ export default function OfflineDonationsPage({ darkModeFromParent }) {
                                 onChange={handleInputChange}
                                 className={selectClass()}
                               >
-                                <option value="">Select a campaign</option>
+                                <option value="" className="text-gray-900 bg-white dark:bg-zinc-800 dark:text-white">
+                                  {campaignsLoading ? "Loading campaigns..." : "Select a campaign"}
+                                </option>
                                 {campaigns.map((c) => (
-                                  <option key={c._id} value={c._id}>
+                                  <option key={c._id} value={c._id} className="text-gray-900 bg-white dark:bg-zinc-800 dark:text-white">
                                     {c.title}
                                   </option>
                                 ))}
@@ -742,6 +744,24 @@ export default function OfflineDonationsPage({ darkModeFromParent }) {
                                     value={formData.upiId}
                                     onChange={handleInputChange}
                                     placeholder="e.g. name@upi"
+                                    className={inputClass()}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Transaction ID / Reference Number (Optional) */}
+                              <div>
+                                <label className={labelClass}>
+                                  Transaction ID / Reference Number <span className={`text-xs font-normal ${darkMode ? 'text-zinc-400' : 'text-gray-500'}`}>(Optional)</span>
+                                </label>
+                                <div className="relative">
+                                  <Hash className={iconClass} />
+                                  <input
+                                    type="text"
+                                    name="referenceNumber"
+                                    value={formData.referenceNumber}
+                                    onChange={handleInputChange}
+                                    placeholder="e.g. 12-digit UTR or Txn ID"
                                     className={inputClass()}
                                   />
                                 </div>

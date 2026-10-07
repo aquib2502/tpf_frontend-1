@@ -39,16 +39,17 @@ export default function DonationStats({
 
   const activeLeaderboard = getActiveData()
   const activeUserStats = rankByTab[activeTab] || { rank: "—", amount: 0 };
-  // ✅ Use real zakat + totals (still keep fallback logic)
-  const calculatedZakat = 25000 // still from props ideally
-  const zakatRemaining = Math.max(0, calculatedZakat - (donationStats.totalZakat || 0))
+  // ✅ Dynamic Zakat calculation values from user profile
+  const calculatedZakat = donationStats?.totalZakatCalculated || 0;
+  const totalZakatDonated = donationStats?.totalZakat || 0;
+  const zakatRemaining = Math.max(0, calculatedZakat - totalZakatDonated);
 
   const hasAnyDonations =
     (donationStats?.totalAmount || 0) > 0 ||
     (donationStats?.totalZakat || 0) > 0 ||
-    (donationStats?.campaignsSupported || 0) > 0
+    (donationStats?.campaignsSupported || 0) > 0;
 
-  const safePeopleHelped = peopleHelped && peopleHelped > 0 ? peopleHelped : 0
+  const safePeopleHelped = peopleHelped && peopleHelped > 0 ? peopleHelped : 0;
 
   const showLeaderboard =
     !leaderboardLoading &&
@@ -61,7 +62,7 @@ export default function DonationStats({
       <div className="animate-pulse text-center py-10 text-gray-400 dark:text-gray-500">
         Loading donation statistics...
       </div>
-    )
+    );
   }
 
   return (
@@ -105,7 +106,7 @@ export default function DonationStats({
             </div>
           </motion.div>
 
-          {/* Total Zakat Donated */}
+          {/* Total Zakat Calculated & Donated */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -123,21 +124,76 @@ export default function DonationStats({
               </div>
               <p className={`text-sm font-medium mb-1 ${darkMode ? "text-zinc-400" : "text-gray-600"
                 }`}>
-                Total Zakat Donated
+                Total Zakat Calculated
               </p>
-              {donationStats.totalZakat > 0 ? (
+
+              {calculatedZakat > 0 ? (
                 <p className={`text-2xl md:text-3xl font-bold ${darkMode ? "text-white" : "text-gray-900"
                   }`}>
-                  ₹{donationStats.totalZakat.toLocaleString('en-IN')}
+                  ₹{calculatedZakat.toLocaleString('en-IN')}
+                </p>
+              ) : totalZakatDonated > 0 ? (
+                <p className={`text-2xl md:text-3xl font-bold ${darkMode ? "text-white" : "text-gray-900"
+                  }`}>
+                  ₹{totalZakatDonated.toLocaleString('en-IN')}
                 </p>
               ) : (
                 <p className={`text-sm md:text-base font-semibold ${darkMode ? "text-zinc-300" : "text-gray-700"
                   }`}>
-                  Calculate and give your Zakat with ease
+                  Calculate and track your Zakat with ease
                 </p>
               )}
 
-              {donationStats.totalZakat === 0 ? (
+              {calculatedZakat > 0 ? (
+                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-zinc-700/60 space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className={darkMode ? "text-zinc-400" : "text-gray-500"}>Calculated:</span>
+                    <span className={`font-semibold ${darkMode ? "text-white" : "text-gray-900"}`}>
+                      ₹{calculatedZakat.toLocaleString('en-IN')}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className={darkMode ? "text-zinc-400" : "text-gray-500"}>Donated:</span>
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                      ₹{totalZakatDonated.toLocaleString('en-IN')}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs pt-1 border-t border-dashed border-gray-200 dark:border-zinc-700/40">
+                    <span className={darkMode ? "text-zinc-400" : "text-gray-500"}>Left to Donate:</span>
+                    {zakatRemaining > 0 ? (
+                      <span className="font-bold text-amber-600 dark:text-amber-400">
+                        ₹{zakatRemaining.toLocaleString('en-IN')}
+                      </span>
+                    ) : (
+                      <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                        ✓ Fully Donated
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-between">
+                    <a
+                      href="/zakat-calculator"
+                      className={`text-[11px] font-medium transition-colors inline-flex items-center gap-1 ${
+                        darkMode ? "text-rose-400 hover:text-rose-300" : "text-rose-600 hover:text-rose-700"
+                      }`}
+                    >
+                      <Calculator className="w-3 h-3" />
+                      Recalculate
+                    </a>
+                    {zakatRemaining > 0 && (
+                      <a
+                        href="/all-campaigns"
+                        className={`text-[11px] font-semibold px-2.5 py-1 rounded-md transition-colors ${
+                          darkMode ? "bg-rose-500/20 text-rose-300 hover:bg-rose-500/30" : "bg-rose-50 text-rose-700 hover:bg-rose-100"
+                        }`}
+                      >
+                        Donate Zakat →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ) : (
                 <a
                   href="/zakat-calculator"
                   className={`mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${darkMode
@@ -149,24 +205,6 @@ export default function DonationStats({
                   Calculate Zakat Now
                   <ArrowRight className="w-4 h-4" />
                 </a>
-              ) : (
-                <div className="mt-3">
-                  <p className={`text-xs font-medium mb-1 ${darkMode ? "text-zinc-400" : "text-gray-600"
-                    }`}>
-                    Calculated Zakat: ₹{calculatedZakat.toLocaleString('en-IN')}
-                  </p>
-                  {zakatRemaining > 0 ? (
-                    <p className={`text-sm font-semibold ${darkMode ? "text-amber-400" : "text-amber-600"
-                      }`}>
-                      ₹{zakatRemaining.toLocaleString('en-IN')} remaining
-                    </p>
-                  ) : (
-                    <p className={`text-sm font-semibold ${darkMode ? "text-emerald-400" : "text-emerald-600"
-                      }`}>
-                      ✓ Zakat completed!
-                    </p>
-                  )}
-                </div>
               )}
             </div>
           </motion.div>

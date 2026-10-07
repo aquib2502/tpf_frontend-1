@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback, memo } from "react";
 import { useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useAppToast } from "@/app/AppToastContext";
 import { getMediaUrl } from "@/utils/media";
 import {
   LayoutDashboard,
@@ -67,6 +68,8 @@ const menuItems = [
 
 const SidebarContent = memo(({ onClose, darkMode, org }) => {
   const pathname = usePathname();
+  const router = useRouter();
+  const { showToast } = useAppToast();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -142,7 +145,24 @@ const SidebarContent = memo(({ onClose, darkMode, org }) => {
             const isActive = pathname === item.path;
             const Icon = item.icon;
             return (
-              <Link key={item.path} href={item.path} className="block">
+              <Link
+                key={item.path}
+                href={item.path}
+                className="block"
+                onClick={(e) => {
+                  if (isActive) {
+                    e.preventDefault();
+                    router.refresh();
+                    showToast({
+                      title: "Already Here",
+                      message: `You are already viewing ${item.name}.`,
+                      type: "info",
+                      duration: 2500,
+                    });
+                  }
+                  onClose?.();
+                }}
+              >
                 <motion.div
                   initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}

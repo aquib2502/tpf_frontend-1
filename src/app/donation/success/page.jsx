@@ -2,13 +2,25 @@
 
 import { CheckCircle, Heart, ArrowRight, Award, Download, Home, Mail } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 
-export default function DonationSuccessPage() {
+function SuccessContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [countdown, setCountdown] = useState(8);
+  const [campaignSlug, setCampaignSlug] = useState(null);
+
+  useEffect(() => {
+    const slugParam = searchParams?.get('campaignSlug');
+    if (slugParam) {
+      setCampaignSlug(slugParam);
+    } else if (typeof window !== 'undefined') {
+      const cached = sessionStorage.getItem('last_donated_campaign_slug');
+      if (cached) setCampaignSlug(cached);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -29,6 +41,8 @@ export default function DonationSuccessPage() {
       router.push('/');
     }
   }, [countdown, router]);
+
+  const donateAgainHref = campaignSlug ? `/campaign/${campaignSlug}` : '/all-campaigns';
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-3 sm:p-4">
@@ -113,7 +127,7 @@ export default function DonationSuccessPage() {
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-2.5">
                   <Link
-                    href="/campaigns"
+                    href={donateAgainHref}
                     className="group flex-1 py-2.5 sm:py-3 px-4 sm:px-5 rounded-lg sm:rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold hover:from-emerald-700 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-xs sm:text-sm"
                   >
                     <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4" strokeWidth={2.5} />
@@ -199,5 +213,17 @@ export default function DonationSuccessPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function DonationSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-emerald-50">
+        <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <SuccessContent />
+    </Suspense>
   );
 }

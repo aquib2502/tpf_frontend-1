@@ -73,6 +73,7 @@ const currentUser = {
     totalAmount: userInfo?.donationStats?.totalAmount || 0,
     totalZakat: userInfo?.donationStats?.totalZakat || 0,
     campaignsSupported: userInfo?.donationStats?.campaignsSupported || 0,
+    totalZakatCalculated: userInfo?.totalZakatCalculated ?? userInfo?.donationStats?.totalZakatCalculated ?? 0,
   };
 
   // Transaction history with 80G eligibility
