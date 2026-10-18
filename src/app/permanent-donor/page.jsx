@@ -1,50 +1,47 @@
-"use client"
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
-import { useState, useEffect } from 'react'
-import PermanentDonorPage from '@/components/permanentdonor/PermanentDonor'
+"use client";
+
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import { useState, useEffect } from "react";
+import PermanentDonorPage from "@/components/permanentdonor/PermanentDonor";
 
 export default function Page() {
   const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('darkMode') === 'true'
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("darkMode") === "true";
     }
-    return false
-  })
+    return false;
+  });
 
   useEffect(() => {
     const handleStorageChange = () => {
-      const savedMode = localStorage.getItem('darkMode')
-      setDarkMode(savedMode === 'true')
-    }
+      const savedMode = localStorage.getItem("darkMode");
+      setDarkMode(savedMode === "true");
+    };
 
-    window.addEventListener('storage', handleStorageChange)
-    window.addEventListener('darkModeChanged', handleStorageChange)
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("darkModeChanged", handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      window.removeEventListener('darkModeChanged', handleStorageChange)
-    }
-  }, [])
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("darkModeChanged", handleStorageChange);
+    };
+  }, []);
 
   return (
-    <div className={`min-h-screen flex flex-col ${darkMode ? "bg-zinc-950" : "bg-gray-50"}`}>
-      
+    <div className={`min-h-screen flex flex-col ${darkMode ? "bg-zinc-950 text-zinc-100" : "bg-[#fbfbf9] text-slate-900"}`}>
+      {/* Existing Navbar preserved exactly as required */}
       <Navbar darkMode={darkMode} setDarkMode={setDarkMode} scrolled={true} />
-      
-      <div className="flex min-h-[calc(100vh-64px)] pt-16">
-        
-        <main className="flex-1 w-full lg:w-auto overflow-x-hidden">
-          <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-16 sm:pb-20 ${
-            darkMode ? "bg-zinc-950" : "bg-gray-50"
-          }`}>
-            <PermanentDonorPage darkModeFromParent={darkMode} />
-          </div>
+
+      {/* Main Content Area between Navbar and Footer */}
+      <div className="flex-1 w-full pt-16">
+        <main className="w-full overflow-x-hidden">
+          <PermanentDonorPage darkModeFromParent={darkMode} />
         </main>
       </div>
 
-      {/* Footer - Normal flow at bottom */}
+      {/* Existing Footer preserved exactly as required */}
       <Footer darkMode={darkMode} />
     </div>
-  )
+  );
 }

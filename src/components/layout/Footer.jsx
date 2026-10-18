@@ -114,11 +114,26 @@ export default function Footer({ darkMode }) {
               Ways To Jannah
             </div>
 
+            {/* Permanent Donor — replaces the Daily / Weekly / Monthly giver links */}
+            <Link
+              href="/permanent-donor"
+              className="group mb-3 flex items-center gap-2.5 rounded-xl border border-[#e6c36a]/25 bg-gradient-to-br from-[#0f3d2e] to-[#1b5e45] px-3 py-2.5 text-white transition-all hover:brightness-110"
+            >
+              <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-white/10 text-[#e6c36a]">
+                <Heart className="h-4 w-4" fill="currentColor" />
+              </span>
+              <span className="min-w-0 flex-1 leading-tight">
+                <span className="block text-[13px] font-semibold">Give once. Help all year.</span>
+                <span className="mt-0.5 block text-[11px] text-white/65">Become a Permanent Donor</span>
+              </span>
+              <span className="text-sm text-[#e6c36a] transition-transform group-hover:translate-x-0.5" aria-hidden>→</span>
+            </Link>
+
             <ul className="space-y-1.5 text-sm">
               {[
-                { name: 'Daily Giver', path: '/permanent-donor/daily', comingSoon: true },
-                { name: 'Donate Weekly (Friday)', path: '/permanent-donor/weekly', comingSoon: true },
-                { name: 'Donate Monthly', path: '/permanent-donor/monthly', comingSoon: true },
+                // { name: 'Daily Giver', path: '/permanent-donor/daily', comingSoon: true },
+                // { name: 'Donate Weekly (Friday)', path: '/permanent-donor/weekly', comingSoon: true },
+                // { name: 'Donate Monthly', path: '/permanent-donor/monthly', comingSoon: true },
                 { name: 'Donate Your Zakat', path: '/zakat-calculator' },
                 { name: 'Discover Fundraiser', path: '/all-campaigns' },
                 { name: 'Donate in Emergency Funds', path: '/', comingSoon: true }

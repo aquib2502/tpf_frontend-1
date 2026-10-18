@@ -11,9 +11,14 @@ function SuccessContent() {
   const searchParams = useSearchParams();
   const [countdown, setCountdown] = useState(8);
   const [campaignSlug, setCampaignSlug] = useState(null);
+  const [isPermanent, setIsPermanent] = useState(false);
 
   useEffect(() => {
     const slugParam = searchParams?.get('campaignSlug');
+    const permParam = searchParams?.get('isPermanent') === 'true';
+    if (permParam) {
+      setIsPermanent(true);
+    }
     if (slugParam) {
       setCampaignSlug(slugParam);
     } else if (typeof window !== 'undefined') {
@@ -42,7 +47,7 @@ function SuccessContent() {
     }
   }, [countdown, router]);
 
-  const donateAgainHref = campaignSlug ? `/campaign/${campaignSlug}` : '/all-campaigns';
+  const donateAgainHref = isPermanent ? '/permanent-donor' : campaignSlug ? `/campaign/${campaignSlug}` : '/all-campaigns';
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-3 sm:p-4">
@@ -76,10 +81,10 @@ function SuccessContent() {
                 {/* Title */}
                 <div className="text-center lg:text-left">
                   <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1 sm:mb-1.5">
-                    Donation Successful
+                    {isPermanent ? "Permanent Donor Contribution Confirmed" : "Donation Successful"}
                   </h1>
                   <p className="text-sm sm:text-base text-gray-600">
-                    Thank you for making a difference
+                    {isPermanent ? "Thank you for becoming a vital pillar of TPF operations." : "Thank you for making a difference"}
                   </p>
                 </div>
 

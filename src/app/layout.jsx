@@ -25,6 +25,8 @@ const _geistMono = V0_Font_Geist_Mono({
 
 const _sourceSerif_4 = V0_Font_Source_Serif_4({
   subsets: ['latin'],
+  style: ['normal', 'italic'],
+  variable: '--font-source-serif',
   weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
 })
 

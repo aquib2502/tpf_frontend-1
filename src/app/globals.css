@@ -372,4 +372,141 @@ html {
 
 .animate-marquee-smooth:hover {
   animation-play-state: paused;
-}
+}
+/* ───────── Permanent Donor page: warm editorial theme ───────── */
+@theme inline {
+  --color-pd-paper: var(--pd-paper);
+  --color-pd-surface: var(--pd-surface);
+  --color-pd-ink: var(--pd-ink);
+  --color-pd-muted: var(--pd-muted);
+  --color-pd-line: var(--pd-line);
+  --color-pd-forest: var(--pd-forest);
+  --color-pd-forest-soft: var(--pd-forest-soft);
+  --color-pd-onforest: var(--pd-onforest);
+  --color-pd-onforest-muted: var(--pd-onforest-muted);
+  --color-pd-gold: var(--pd-gold);
+  --color-pd-gold-hover: var(--pd-gold-hover);
+  --color-pd-ongold: var(--pd-ongold);
+  --color-pd-clay: var(--pd-clay);
+  --color-pd-edge: var(--pd-edge);
+  --color-pd-tint: var(--pd-tint);
+  --color-pd-goldsoft: var(--pd-goldsoft);
+}
+
+.pd-root {
+  --pd-paper: #faf8f4;
+  --pd-surface: #ffffff;
+  --pd-ink: #14241c;
+  --pd-muted: #5d6b63;
+  --pd-line: #e8e2d4;
+  --pd-tint: #eff5f0;
+  --pd-goldsoft: #fbf2d9;
+  --pd-forest: #0d3a2b;
+  --pd-forest-soft: #15503b;
+  --pd-onforest: #f3ecda;
+  --pd-onforest-muted: #a9c2b4;
+  --pd-gold: #e2ab3d;
+  --pd-gold-hover: #ecbe5f;
+  --pd-ongold: #0d3a2b;
+  --pd-clay: #b4472a;
+  --pd-edge: #0d3a2b;
+  --pd-t1: #0d3a2b;
+  --pd-t2: #2f6f55;
+  --pd-t3: #86ad96;
+  --pd-t4: #f0b13a;
+}
+
+.pd-root[data-theme="dark"] {
+  --pd-paper: #0b1511;
+  --pd-tint: #13251c;
+  --pd-goldsoft: #2a2411;
+  --pd-surface: #111f19;
+  --pd-ink: #efe8d6;
+  --pd-muted: #9fb2a7;
+  --pd-line: #26392f;
+  --pd-forest: #0f2e23;
+  --pd-forest-soft: #174a38;
+  --pd-clay: #e4785a;
+  --pd-edge: #f0b13a;
+  --pd-t1: #3f9a76;
+  --pd-t2: #2f7a5e;
+  --pd-t3: #6fb596;
+  --pd-t4: #f0b13a;
+}
+
+.pd-serif {
+  font-family: var(--font-source-serif), Georgia, "Times New Roman", serif;
+}
+
+.pd-root :focus-visible {
+  outline: 2px solid var(--pd-gold);
+  outline-offset: 3px;
+}
+
+/* faint paper grain used on the forest hero */
+.pd-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* torn-receipt bottom edge */
+.pd-zigzag {
+  --z: 14px;
+  background:
+    linear-gradient(135deg, var(--pd-surface) 50%, transparent 50%) 0 100% / var(--z) var(--z) repeat-x,
+    linear-gradient(225deg, var(--pd-surface) 50%, transparent 50%) 0 100% / var(--z) var(--z) repeat-x;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pd-root * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes pd-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(240, 177, 58, 0.55); }
+  70% { box-shadow: 0 0 0 14px rgba(240, 177, 58, 0); }
+}
+.pd-glow {
+  animation: pd-glow 2.4s ease-out infinite;
+}
+
+/* Header "Be the Lifeline" button: soft light sweep + twinkling stars */
+.lifeline-btn {
+  position: relative;
+  overflow: hidden;
+}
+.lifeline-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.8) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: lifeline-shine 3.8s ease-in-out infinite;
+}
+@keyframes lifeline-shine {
+  0%, 55% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+.lifeline-spark {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  animation: lifeline-twinkle 2.6s ease-in-out infinite;
+}
+@keyframes lifeline-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(45deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lifeline-btn::after { animation: none; display: none; }
+  .lifeline-spark { animation: none; opacity: 0.85; transform: none; }
+}

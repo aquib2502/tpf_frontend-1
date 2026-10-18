@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Image from 'next/image';
-import { Moon, Sun, Building2, TrendingUp } from 'lucide-react';
+import { Moon, Sun, Building2, TrendingUp, Heart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getMediaUrl } from '@/utils/media';
 
@@ -123,12 +123,56 @@ export default function DesktopNav({
           </button>
         )}
 
+        {/* Permanent Donor — emotional call to action, visible to everyone */}
+        <div className="relative flex-shrink-0">
+          <button
+            onClick={() => router.push('/permanent-donor')}
+            title="Become a Permanent Donor"
+            aria-label="Be the Lifeline. Become a Permanent Donor"
+            className="lifeline-btn group h-9 inline-flex items-center justify-center gap-1.5 rounded-full px-2.5 lg:px-4 bg-gradient-to-br from-white via-[#fff0f3] to-[#ffd3de] text-[#064e3b] font-semibold text-sm border border-[#f4a9bb] shadow-md shadow-rose-400/25 hover:brightness-[1.03] hover:-translate-y-px active:translate-y-0 transition-all cursor-pointer whitespace-nowrap"
+          >
+            <Heart className="w-4 h-4 text-[#e11d48] transition-transform group-hover:scale-110" fill="currentColor" />
+            <span className="hidden lg:inline">Be the Lifeline</span>
+          </button>
+
+          {/* twinkling stars around the button */}
+          {[
+            { cls: '-top-1.5 right-3', size: 10, delay: '0s' },
+            { cls: '-bottom-1 left-4', size: 8, delay: '0.9s' },
+            { cls: 'top-0.5 -left-1.5', size: 7, delay: '1.6s' },
+          ].map((s) => (
+            <svg
+              key={s.cls}
+              aria-hidden
+              viewBox="0 0 24 24"
+              width={s.size}
+              height={s.size}
+              className={`lifeline-spark ${s.cls} text-rose-300 drop-shadow-[0_0_3px_rgba(251,113,133,0.95)]`}
+              style={{ animationDelay: s.delay }}
+              fill="currentColor"
+            >
+              <path d="M12 0 14.5 9.5 24 12 14.5 14.5 12 24 9.5 14.5 0 12 9.5 9.5Z" />
+            </svg>
+          ))}
+        </div>
+
         {/* Icon Buttons - equal size 36x36 */}
+        {/* Zakat Calculator — previously shown to everyone, kept here for reference:
         <button
           className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer flex-shrink-0
             ${darkMode ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-white/80 hover:bg-zinc-100'}`}
           onClick={() => router.push('/zakat-calculator')}
           title="Zakat Calculator"
+        >
+          <Image src="/TPFAid-Icon-Zakat-1.svg" alt="Zakat" width={20} height={20} />
+        </button>
+        */}
+        {/* Zakat Calculator — opens for logged-in users, guests are asked to log in first */}
+        <button
+          className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors cursor-pointer flex-shrink-0
+            ${darkMode ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-white/80 hover:bg-zinc-100'}`}
+          onClick={() => router.push(isAuthReady && !userInfo ? '/login' : '/zakat-calculator')}
+          title={isAuthReady && !userInfo ? 'Log in to use the Zakat Calculator' : 'Zakat Calculator'}
         >
           <Image src="/TPFAid-Icon-Zakat-1.svg" alt="Zakat" width={20} height={20} />
         </button>

@@ -56,7 +56,7 @@ export default function MobileMenu({
     { name: 'My Profile', icon: User2Icon, isLucide: true, path: '/profile/userprofile' },
     { name: 'My Donations', icon: Heart, isLucide: true, path: '/profile/mydonation' },
     { name: 'My Wishlist', icon: Plus, isLucide: true, path: '/profile/my-campaign?tab=wishlist' },
-    { name: 'Daily Givers', icon: Leaf, isLucide: true, path: '/permanent-donor/daily' },
+    // { name: 'Daily Givers', icon: Leaf, isLucide: true, path: '/permanent-donor/daily' }, // replaced by the Permanent Donor card above
     { name: 'My-Zakaat', icon: '/TPFAid-Icon-Zakat-1.svg', isLucide: false, path: '/zakat-calculator' },
   ];
 
@@ -237,8 +237,8 @@ export default function MobileMenu({
                   <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`} />
 
                   {searchQuery && (
-                    <div className={`absolute top-full left-0 right-0 mt-1.5 rounded-xl overflow-hidden border shadow-xl z-10
-                      ${darkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-zinc-100'}`}>
+                    <div className={`mt-2 max-h-56 overflow-y-auto rounded-xl border
+                      ${darkMode ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-zinc-200'}`}>
                       {filteredCampaigns.length > 0 ? filteredCampaigns.map((campaign) => (
                         <div
                           key={campaign._id}
@@ -282,6 +282,22 @@ export default function MobileMenu({
                   >
                     <Heart className="w-4.5 h-4.5 flex-shrink-0" style={{ width: 18, height: 18 }} />
                     Discover impact stories →
+                  </Link>
+
+                  {/* Permanent Donor — emotional call to action */}
+                  <Link
+                    href="/permanent-donor"
+                    onClick={close}
+                    className="group flex items-center gap-2.5 rounded-xl border border-[#e6c36a]/25 bg-gradient-to-br from-[#0f3d2e] to-[#1b5e45] px-3 py-2 text-white transition-all hover:brightness-110 active:scale-[0.99]"
+                  >
+                    <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-full bg-white/10 text-[#e6c36a]">
+                      <Heart className="h-4 w-4" fill="currentColor" />
+                    </span>
+                    <span className="min-w-0 flex-1 leading-tight">
+                      <span className="block text-[13px] font-semibold">Stand with families, for life</span>
+                      <span className="mt-0.5 block truncate text-[11px] text-white/65">Become a Permanent Donor</span>
+                    </span>
+                    <span className="text-sm text-[#e6c36a] transition-transform group-hover:translate-x-0.5" aria-hidden>→</span>
                   </Link>
                 </div>
               </FadeIn>
@@ -377,24 +393,27 @@ export default function MobileMenu({
               {/* ── ORGANIZATIONS — only shown once auth resolved + logged out ─ */}
               {isAuthReady && !userInfo && (
                 <FadeIn delay={240}>
-                  <div className={`rounded-2xl border p-4 space-y-3
-                    ${darkMode
-                      ? 'bg-indigo-950/30 border-indigo-900/60'
-                      : 'bg-indigo-50 border-indigo-200'}`}>
-                    <p className={`text-[10px] font-bold tracking-widest uppercase
-                      ${darkMode ? 'text-indigo-400' : 'text-indigo-500'}`}>
-                      Organizations
-                    </p>
-                    <Link
-                      href="/organization/login"
-                      className={`cursor-pointer flex items-center gap-3 text-sm font-semibold transition-colors
-                        ${darkMode ? 'text-indigo-300 hover:text-white' : 'text-indigo-700 hover:text-indigo-900'}`}
-                      onClick={close}
-                    >
-                      <Building2 className="w-[18px] h-[18px] flex-shrink-0" />
-                      Organization Login
-                    </Link>
-                  </div>
+                  <Link
+                    href="/organization/login"
+                    onClick={close}
+                    className={`group flex items-center gap-2.5 rounded-xl border px-3 py-2.5 transition-all
+                      ${darkMode
+                        ? 'bg-gradient-to-r from-indigo-950/60 to-zinc-900 border-indigo-800/60 hover:border-indigo-600'
+                        : 'bg-gradient-to-r from-indigo-50 to-white border-indigo-200 hover:border-indigo-300'}`}
+                  >
+                    <span className="grid h-8 w-8 flex-shrink-0 place-items-center rounded-lg bg-indigo-600 text-white">
+                      <Building2 className="h-4 w-4" />
+                    </span>
+                    <span className="min-w-0 flex-1 leading-tight">
+                      <span className={`block text-[13px] font-semibold ${darkMode ? 'text-indigo-200' : 'text-indigo-900'}`}>
+                        Organization Login
+                      </span>
+                      <span className={`mt-0.5 block text-[11px] ${darkMode ? 'text-zinc-500' : 'text-zinc-500'}`}>
+                        For registered organizations
+                      </span>
+                    </span>
+                    <span className={`text-sm transition-transform group-hover:translate-x-0.5 ${darkMode ? 'text-indigo-300' : 'text-indigo-600'}`} aria-hidden>→</span>
+                  </Link>
                 </FadeIn>
               )}
 
