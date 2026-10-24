@@ -64,14 +64,13 @@ function StreamEntry({ donation, isNew, dark }) {
 
         <div
           className={`mt-1 text-[22px] font-bold leading-none tabular-nums tracking-tight ${dark ? 'text-emerald-400' : 'text-emerald-700'}`}
-          style={{ fontFamily: 'var(--font-source-serif), Georgia, serif' }}
         >
           ₹{inr.format(donation.amount)}
         </div>
 
         <div
           title={donation.campaignName}
-          className={`mt-1.5 text-[11.5px] leading-[1.3] line-clamp-2 ${dark ? 'text-emerald-50/85' : 'text-zinc-700'} ${href ? 'group-hover:underline underline-offset-2 decoration-emerald-600/40' : ''}`}
+          className={`mt-1.5 text-[11.5px] leading-[1.3] line-clamp-2 ${dark ? 'text-emerald-50/85' : 'text-zinc-700'} underline underline-offset-2 decoration-emerald-600/50 ${href ? 'group-hover:decoration-emerald-600' : ''}`}
         >
           {donation.campaignName}
         </div>
@@ -143,21 +142,21 @@ export default function LiveImpactStream({ darkMode }) {
 
   const heading = darkMode ? 'text-white' : 'text-zinc-900';
   const body = darkMode ? 'text-zinc-400' : 'text-zinc-600';
-    const fadeFrom = darkMode ? 'from-zinc-800' : 'from-[#f8fcf9]';
+    const fadeFrom = darkMode ? 'from-zinc-800' : 'from-[#f0f9f3]';
   const arrow = `hidden md:flex absolute top-1/2 -translate-y-1/2 z-10 h-11 w-11 items-center justify-center rounded-full border text-lg
     transition-opacity duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600
     ${darkMode ? 'bg-zinc-900 border-zinc-700 text-zinc-200 hover:bg-zinc-700' : 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50 shadow-sm'}`;
 
   return (
-    <section aria-labelledby="faith-in-motion" className={`relative overflow-hidden py-14 md:py-20 ${darkMode ? 'bg-zinc-800' : 'bg-[#f8fcf9]'}`}>
+    <section aria-labelledby="faith-in-motion" className={`relative overflow-hidden py-14 md:py-20 ${darkMode ? 'bg-zinc-800' : 'bg-[#f0f9f3]'}`}>
       {/* quiet backdrop: pale wash plus ripples radiating from the heading */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage: darkMode
-            ? 'radial-gradient(55% 60% at 15% 0%, rgba(20,184,166,0.10), transparent 70%), radial-gradient(50% 55% at 90% 10%, rgba(52,211,153,0.08), transparent 70%)'
-            : 'radial-gradient(55% 60% at 12% 0%, rgba(45,212,191,0.16), transparent 70%), radial-gradient(50% 55% at 92% 8%, rgba(253,230,138,0.20), transparent 70%), linear-gradient(180deg, #f1faf5 0%, #f8fcf9 55%, #fcfefd 100%)',
+            ? 'radial-gradient(55% 60% at 15% 0%, rgba(20,184,166,0.16), transparent 70%), radial-gradient(50% 55% at 90% 10%, rgba(52,211,153,0.13), transparent 70%)'
+            : 'radial-gradient(55% 60% at 12% 0%, rgba(20,184,166,0.30), transparent 70%), radial-gradient(50% 55% at 92% 8%, rgba(251,191,36,0.26), transparent 70%), linear-gradient(180deg, #e3f4ea 0%, #f0f9f3 55%, #f8fcfa 100%)',
         }}
       />
       <svg
@@ -170,15 +169,15 @@ export default function LiveImpactStream({ darkMode }) {
           maskImage: 'linear-gradient(180deg, #000 0%, #000 45%, transparent 95%)',
         }}
       >
-        <g fill="none" stroke={darkMode ? '#6ee7b7' : '#059669'} strokeWidth="1">
-          <circle cx="600" cy="150" r="110" strokeOpacity={darkMode ? 0.112 : 0.16} />
-          <circle cx="600" cy="150" r="200" strokeOpacity={darkMode ? 0.098 : 0.14} />
-          <circle cx="600" cy="150" r="290" strokeOpacity={darkMode ? 0.084 : 0.12} />
-          <circle cx="600" cy="150" r="380" strokeOpacity={darkMode ? 0.070 : 0.1} />
-          <circle cx="600" cy="150" r="470" strokeOpacity={darkMode ? 0.059 : 0.085} />
-          <circle cx="600" cy="150" r="560" strokeOpacity={darkMode ? 0.049 : 0.07} />
-          <circle cx="600" cy="150" r="650" strokeOpacity={darkMode ? 0.038 : 0.055} />
-          <circle cx="600" cy="150" r="740" strokeOpacity={darkMode ? 0.028 : 0.04} />
+        <g fill="none" stroke={darkMode ? '#6ee7b7' : '#059669'} strokeWidth="1.25">
+          <circle cx="600" cy="150" r="110" strokeOpacity={darkMode ? 0.179 : 0.336} />
+          <circle cx="600" cy="150" r="200" strokeOpacity={darkMode ? 0.157 : 0.294} />
+          <circle cx="600" cy="150" r="290" strokeOpacity={darkMode ? 0.134 : 0.252} />
+          <circle cx="600" cy="150" r="380" strokeOpacity={darkMode ? 0.112 : 0.21} />
+          <circle cx="600" cy="150" r="470" strokeOpacity={darkMode ? 0.094 : 0.179} />
+          <circle cx="600" cy="150" r="560" strokeOpacity={darkMode ? 0.078 : 0.147} />
+          <circle cx="600" cy="150" r="650" strokeOpacity={darkMode ? 0.061 : 0.116} />
+          <circle cx="600" cy="150" r="740" strokeOpacity={darkMode ? 0.045 : 0.084} />
         </g>
       </svg>
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -196,7 +195,7 @@ export default function LiveImpactStream({ darkMode }) {
 
           <div className="mt-8 md:mt-10" aria-live="polite">
             <div
-              className={`font-bold tabular-nums tracking-tight leading-none text-5xl md:text-7xl ${darkMode ? 'text-emerald-400' : 'text-emerald-600'}`}
+              className={`font-bold tabular-nums tracking-tight leading-none text-[length:40px] sm:text-5xl md:text-7xl ${darkMode ? 'text-emerald-400' : 'text-emerald-600'}`}
               aria-label={hasStats ? `₹${inr.format(totalRaised)} raised` : undefined}
             >
               <span className="mr-1 align-baseline text-[0.62em] font-semibold opacity-80">₹</span>

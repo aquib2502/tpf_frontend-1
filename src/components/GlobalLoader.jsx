@@ -1,15 +1,15 @@
 "use client";
 
-export default function GlobalLoader() {
+export default function GlobalLoader({ leaving = false }) {
   return (
     <div
       role="status"
       aria-live="polite"
       aria-label="Loading TPF Aid"
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden bg-[#f8fcf9]"
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden bg-[#f0f9f3] ${leaving ? "tpf-loader-out" : ""}`}
       style={{
         backgroundImage:
-          'radial-gradient(55% 50% at 15% 0%, rgba(45,212,191,0.16), transparent 70%), radial-gradient(50% 50% at 90% 5%, rgba(253,230,138,0.18), transparent 70%), linear-gradient(180deg, #f1faf5 0%, #fcfefd 100%)',
+          'radial-gradient(55% 50% at 15% 0%, rgba(20,184,166,0.30), transparent 70%), radial-gradient(50% 50% at 90% 5%, rgba(251,191,36,0.26), transparent 70%), linear-gradient(180deg, #e3f4ea 0%, #f6fbf8 100%)',
       }}
     >
       {/* ripples echoing the "Faith in Motion" backdrop */}
@@ -28,8 +28,8 @@ export default function GlobalLoader() {
         <p className="tpf-loader-tag mt-3 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-800/70 sm:text-xs">
           Supporting those in need
         </p>
-        <div className="mt-7 h-[3px] w-28 overflow-hidden rounded-full bg-emerald-600/15 sm:w-36">
-          <span className="tpf-loader-bar block h-full w-1/2 rounded-full bg-emerald-600" />
+        <div className="mt-7 h-1 w-48 overflow-hidden rounded-full bg-emerald-600/15 sm:w-64">
+          <span className="tpf-loader-bar block h-full w-full rounded-full bg-emerald-600" />
         </div>
       </div>
     </div>

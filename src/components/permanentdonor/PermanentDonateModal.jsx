@@ -362,7 +362,7 @@ export default function PermanentDonateModal({ open, onOpenChange, darkMode }) {
                 aria-busy={isDonating}
                 className={`w-full h-12 px-5 rounded-full font-bold text-base inline-flex items-center justify-center gap-2.5 transition-all ${
                   canDonate
-                    ? "bg-pd-gold text-pd-ongold shadow-[0_10px_24px_-8px_rgba(240,177,58,0.9)] hover:bg-pd-gold-hover hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                    ? "bg-pd-accent text-pd-onaccent shadow-[0_10px_24px_-10px_rgba(5,150,105,0.65)] hover:bg-pd-accent-hover hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                     : "bg-pd-line text-pd-muted cursor-not-allowed"
                 }`}
               >
