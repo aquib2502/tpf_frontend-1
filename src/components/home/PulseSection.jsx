@@ -1,41 +1,16 @@
-import { currency } from '@/lib/utils';
-// import { recentDonations } from '@/lib/constants';
 import { useCMS } from '@/app/CMSContext';
 import { useState, useEffect } from 'react';
 import { getMediaUrl } from '@/utils/media';
-import { useFetchRecentDonationsQuery } from '@/utils/slices/donationApiSlice';
-import { useFetchImpactStatsQuery } from '@/utils/slices/campaignApiSlice';
+import LiveImpactStream from './LiveImpactStream';
 import { useRouter } from 'next/navigation';
 
 export default function PulseSection({ darkMode }) {
   const router = useRouter();
-  const { data: recentData, isLoading: isRecentLoading } = useFetchRecentDonationsQuery();
-  const { data: statsData } = useFetchImpactStatsQuery();
-
-  const totalRaised = statsData?.stats?.totalRaised || 0;
-
-
   const COLORS = {
     neutralHeading: darkMode ? "text-white" : "text-zinc-900",
     neutralBody: darkMode ? "text-zinc-400" : "text-zinc-600",
   };
 
-  const recentDonations = recentData?.donations || [];
-
-  const timeAgo = (dateStr) => {
-    const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
-    let interval = seconds / 31536000;
-    if (interval > 1) return Math.floor(interval) + " years ago";
-    interval = seconds / 2592000;
-    if (interval > 1) return Math.floor(interval) + " months ago";
-    interval = seconds / 86400;
-    if (interval > 1) return Math.floor(interval) + " days ago";
-    interval = seconds / 3600;
-    if (interval > 1) return Math.floor(interval) + " hours ago";
-    interval = seconds / 60;
-    if (interval > 1) return Math.floor(interval) + " mins ago";
-    return Math.floor(seconds) + " seconds ago";
-  };
   const cms = useCMS();
   const cmsInfluencers = cms.filter(item => item.type === "influencers");
   /* Influencers slider (5 visible, auto-scroll left by 1 every second) */
@@ -196,147 +171,7 @@ export default function PulseSection({ darkMode }) {
           </div>
         </div>
       </section>
-      <section id="pulse" className={`py-14 ${darkMode ? 'bg-zinc-800' : 'bg-white'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10 relative">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-all duration-300 ${darkMode ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-red-50 border-red-200 text-red-600'}`}>
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
-                </span>
-                Live
-              </span>
-            </div>
-            <h2 className={`text-3xl md:text-5xl font-bold mb-3 ${COLORS.neutralHeading}`}>
-              Faith in Motion
-            </h2>
-            <p className={`text-sm md:text-base ${COLORS.neutralBody}`}>
-              Live generosity snapshot
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center mb-10 ">
-            <div className={`relative inline-block px-5 py-1 md:px-6 md:py-2 rounded-2xl ${darkMode ? 'bg-zinc-800' : 'bg-zinc-50'} shadow-[0_4px_10px_rgba(156,163,175,0.4)] hover:shadow-[0_6px_14px_rgba(107,114,128,0.6)]`}>
-              <div className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent">
-                {currency(totalRaised)}
-              </div>
-            </div>
-            <div className={`text-sm ${COLORS.neutralBody} mt-3`}>Total raised</div>
-          </div>
-
-          <div className="max-w-5xl mx-auto">
-            {/* MOBILE — horizontal scroll */}
-            <div className={`md:hidden relative overflow-x-auto scrollbar-hide flex gap-4 px-2 min-h-[112px] ${recentDonations.length < 2 ? 'justify-center' : 'justify-start'}`}>
-              {isRecentLoading ? (
-                <div className="w-full text-center py-4 text-zinc-500">Loading live donations...</div>
-              ) : recentDonations.length === 0 ? (
-                <div className="w-full text-center py-4 text-zinc-500">No recent donations yet</div>
-              ) : (
-                recentDonations.map((donation, index) => (
-                  <div
-                    key={index}
-                    onClick={() => donation.campaignSlug && router.push(`/campaign/${donation.campaignSlug}`)}
-                    className={`shrink-0 w-60 p-5 rounded-xl text-center overflow-hidden transition-all duration-300 ${
-                      donation.campaignSlug ? 'cursor-pointer' : ''
-                    } ${darkMode ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-zinc-50 hover:bg-white'
-                      } border ${darkMode ? 'border-zinc-700' : 'border-zinc-200'} hover:border-zinc-400
-        shadow-[0_4px_10px_rgba(156,163,175,0.4)] hover:shadow-[0_6px_14px_rgba(107,114,128,0.6)]`}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative">
-                      <div className={`text-lg font-bold ${COLORS.neutralHeading} mb-1`}>
-                        {currency(donation.amount)}
-                      </div>
-                      <div className={`text-xs ${COLORS.neutralBody} font-medium`}>
-                        {donation.name}
-                      </div>
-                      <div className={`text-[10px] ${COLORS.neutralBody} opacity-70 mt-0.5 line-clamp-1 underline`}>
-                        {donation.campaignName}
-                      </div>
-                      <div className={`text-[10px] ${COLORS.neutralBody} opacity-50 mt-1`}>
-                        {timeAgo(donation.time)}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-
-            {/* DESKTOP — 6 visible with arrows */}
-            <div className="relative hidden md:flex justify-center w-full">
-
-
-              {/* LEFT ARROW */}
-              <button
-                onClick={() =>
-                  document.getElementById("recent-track")
-                    ?.scrollBy({ left: -250, behavior: "smooth" })
-                }
-                className={`absolute left-0 top-1/2 -translate-y-1/2 z-10
-               bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm
-               p-2 rounded-full shadow ${recentDonations.length <= 6 ? 'hidden' : 'flex'}`}
-              >
-                ←
-              </button>
-
-              {/* HORIZONTAL TRACK */}
-              <div id="recent-track" className={`flex overflow-x-auto scrollbar-hide py-5 scroll-smooth w-full min-h-[112px] ${recentDonations.length < 6 ? 'justify-center' : 'justify-start'}`}>
-                {isRecentLoading ? (
-                  <div className="w-full text-center py-10 text-zinc-500">Loading live donations...</div>
-                ) : recentDonations.length === 0 ? (
-                  <div className="w-full text-center py-10 text-zinc-500">No recent donations yet</div>
-                ) : (
-                  recentDonations.map((donation, index) => (
-                    <div key={index} className="shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-[16.66%] px-2">
-                      <div
-                        onClick={() => donation.campaignSlug && router.push(`/campaign/${donation.campaignSlug}`)}
-                        className={`relative group p-5 w-full h-28 rounded-xl text-center overflow-hidden transition-all duration-300 ${
-                          donation.campaignSlug ? 'cursor-pointer' : ''
-                        } ${darkMode ? 'bg-zinc-800 hover:bg-zinc-700' : 'bg-zinc-50 hover:bg-white'
-                          } border ${darkMode ? 'border-zinc-700' : 'border-zinc-200'} hover:border-zinc-400
-            shadow-[0_4px_10px_rgba(156,163,175,0.4)] hover:shadow-[0_6px_14px_rgba(107,114,128,0.6)]`}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        <div className="relative">
-                          <div className={`text-lg font-bold ${COLORS.neutralHeading} mb-1`}>
-                            {currency(donation.amount)}
-                          </div>
-                          <div className={`text-xs ${COLORS.neutralBody} font-medium`}>
-                            {donation.name}
-                          </div>
-                          <div className={`text-[10px] ${COLORS.neutralBody} opacity-70 mt-0.5 line-clamp-1 px-1 underline`}>
-                            {donation.campaignName}
-                          </div>
-                          <div className={`text-[10px] ${COLORS.neutralBody} opacity-50 mt-1`}>
-                            {timeAgo(donation.time)}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* RIGHT ARROW */}
-              <button
-                onClick={() =>
-                  document.getElementById("recent-track")
-                    ?.scrollBy({ left: 250, behavior: "smooth" })
-                }
-                className={`absolute right-0 top-1/2 -translate-y-1/2 z-10
-               bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm
-               p-2 rounded-full shadow ${recentDonations.length <= 6 ? 'hidden' : 'flex'}`}
-              >
-                →
-              </button>
-
-            </div>
-
-          </div>
-        </div>
-      </section>
+      <LiveImpactStream darkMode={darkMode} />
     </>
   );
 }
