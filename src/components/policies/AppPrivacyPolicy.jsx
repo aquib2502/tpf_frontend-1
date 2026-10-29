@@ -31,7 +31,7 @@ export default function AppPrivacyPolicy({ darkMode, onBack }) {
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   const copyEmail = () => {
-    navigator.clipboard.writeText("grievances@tpfaid.org");
+    navigator.clipboard.writeText("contact@truepathfoundation.in");
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
   };
@@ -177,10 +177,10 @@ export default function AppPrivacyPolicy({ darkMode, onBack }) {
           <p>
             This policy explains what information the App collects, how we use it, and the choices you have. By using the App you agree to this policy. If you have questions, contact us at{" "}
             <a
-              href="mailto:grievances@tpfaid.org"
+              href="mailto:contact@truepathfoundation.in"
               className="text-teal-600 dark:text-teal-400 font-semibold underline underline-offset-2 hover:text-teal-500"
             >
-              grievances@tpfaid.org
+              contact@truepathfoundation.in
             </a>{" "}
             or{" "}
             <a
@@ -645,7 +645,8 @@ export default function AppPrivacyPolicy({ darkMode, onBack }) {
                   </div>
                   <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mb-3">
                     Send an email from your registered email address or quote your registered mobile number to{" "}
-                    <strong className="text-zinc-800 dark:text-zinc-200">grievances@tpfaid.org</strong> with the subject line{" "}
+                    <strong className="text-zinc-800 dark:text-zinc-200">contact@truepathfoundation.in</strong> (or{" "}
+                    <span className="text-zinc-700 dark:text-zinc-300">grievances@tpfaid.org</span>) with the subject line{" "}
                     <code className="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-700 text-red-600 dark:text-red-400 text-xs font-mono font-bold">
                       Delete my account
                     </code>.
@@ -653,7 +654,7 @@ export default function AppPrivacyPolicy({ darkMode, onBack }) {
 
                   <div className="flex flex-wrap gap-2.5">
                     <a
-                      href="mailto:grievances@tpfaid.org?subject=Delete%20my%20account&body=Hello%20TPF%20Aid%20Team%2C%0A%0APlease%20permanently%20delete%20my%20TPF%20Aid%20account%20and%20all%20associated%20data.%0A%0ARegistered%20Mobile%20Number%3A%20%0ARegistered%20Email%3A%20%0AFull%20Name%3A%20%0A%0AThank%20you."
+                      href="mailto:contact@truepathfoundation.in?subject=Delete%20my%20account&body=Hello%20TPF%20Aid%20Team%2C%0A%0APlease%20permanently%20delete%20my%20TPF%20Aid%20account%20and%20all%20associated%20data.%0A%0ARegistered%20Mobile%20Number%3A%20%0ARegistered%20Email%3A%20%0AFull%20Name%3A%20%0A%0AThank%20you."
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-700 text-white shadow-sm transition-all"
                     >
                       <Mail className="w-3.5 h-3.5" />
@@ -672,7 +673,7 @@ export default function AppPrivacyPolicy({ darkMode, onBack }) {
                       ) : (
                         <>
                           <Copy className="w-3.5 h-3.5" />
-                          <span>Copy grievances@tpfaid.org</span>
+                          <span>Copy contact@truepathfoundation.in</span>
                         </>
                       )}
                     </button>
@@ -789,6 +790,12 @@ export default function AppPrivacyPolicy({ darkMode, onBack }) {
                   <div className="space-y-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
                     <p className="flex items-center gap-2">
                       <Mail className="w-4 h-4 text-teal-500 shrink-0" />
+                      <a href="mailto:contact@truepathfoundation.in" className="hover:underline font-medium">
+                        contact@truepathfoundation.in
+                      </a>
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-teal-500 shrink-0" />
                       <a href="mailto:support@tpfaid.org" className="hover:underline font-medium">
                         support@tpfaid.org
                       </a>
@@ -801,8 +808,8 @@ export default function AppPrivacyPolicy({ darkMode, onBack }) {
                     </p>
                     <p className="flex items-center gap-2">
                       <ExternalLink className="w-4 h-4 text-teal-500 shrink-0" />
-                      <a href="https://tpfaid.org" target="_blank" rel="noopener noreferrer" className="hover:underline font-medium">
-                        www.tpfaid.org
+                      <a href="https://www.truepathfoundation.in" target="_blank" rel="noopener noreferrer" className="hover:underline font-medium">
+                        www.truepathfoundation.in
                       </a>
                     </p>
                   </div>
@@ -820,9 +827,10 @@ export default function AppPrivacyPolicy({ darkMode, onBack }) {
                     <p><strong>Designation:</strong> Compliance & Grievance Redressal Officer</p>
                     <p><strong>Entity:</strong> True Path Foundation</p>
                     <p><strong>Official Email:</strong>{" "}
-                      <a href="mailto:grievances@tpfaid.org" className="text-teal-600 dark:text-teal-400 font-bold underline">
-                        grievances@tpfaid.org
-                      </a>
+                      <a href="mailto:contact@truepathfoundation.in" className="text-teal-600 dark:text-teal-400 font-bold underline">
+                        contact@truepathfoundation.in
+                      </a>{" "}
+                      <span className="text-zinc-500 text-xs">(alt: grievances@tpfaid.org)</span>
                     </p>
                     <p className="text-zinc-500 dark:text-zinc-400 text-xs mt-1">
                       Response window: Acknowledgment within 48 hours; resolution within statutory timeline.
