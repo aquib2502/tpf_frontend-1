@@ -173,7 +173,8 @@ export default function Footer({ darkMode }) {
                 { name: 'FAQs', path: '/faqs' },
                 { name: 'Legal Aid Centre', path: '/legalaid' },
                 { name: 'Contact Us', path: '/contactus' },
-                { name: 'Policies', path: '/policies' }
+                { name: 'Policies', path: '/policies' },
+                { name: 'App Privacy Policy', path: '/app-privacy-policy' }
 
               ].map(link => (
                 <li key={link.name}>
@@ -350,10 +351,31 @@ export default function Footer({ darkMode }) {
             </div>
           </div>
 
-          <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className={`text-xs md:text-sm ${darkMode ? 'text-zinc-400' : 'text-gray-600'}`}>
-              © {new Date().getFullYear()} True Path Foundation. All rights reserved.
-            </span>
+          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-center sm:text-left">
+              <span className={`text-xs md:text-sm ${darkMode ? 'text-zinc-400' : 'text-gray-600'}`}>
+                © {new Date().getFullYear()} True Path Foundation. All rights reserved.
+              </span>
+              <div className="flex items-center gap-3 text-xs">
+                <Link
+                  href="/app-privacy-policy"
+                  className={`${
+                    darkMode ? 'text-zinc-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                  } transition-colors underline-offset-2 hover:underline`}
+                >
+                  App Privacy Policy
+                </Link>
+                <span className={darkMode ? 'text-zinc-700' : 'text-zinc-300'}>•</span>
+                <Link
+                  href="/policies"
+                  className={`${
+                    darkMode ? 'text-zinc-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                  } transition-colors underline-offset-2 hover:underline`}
+                >
+                  Terms & Policies
+                </Link>
+              </div>
+            </div>
 
             {/* Social icons (custom SVG silver icons) */}
             <div className="flex items-center gap-3 mr-0 sm:mr-6">

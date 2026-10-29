@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, FileText, CreditCard, Scale, ArrowLeft, ChevronRight } from "lucide-react";
+import { Shield, FileText, CreditCard, Scale, ArrowLeft, ChevronRight, Smartphone } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import PrivacyPolicy from "./PrivacyPolicy";
 import TermsOfUse from "./TermsOfUse";
 import Pricing from "./Pricing";
 import Governance from "./Governance";
+import AppPrivacyPolicy from "./AppPrivacyPolicy";
 
 export default function Policies({ darkMode }) {
   const [selectedPolicy, setSelectedPolicy] = useState(null);
@@ -15,8 +16,20 @@ export default function Policies({ darkMode }) {
 
   const policies = [
     {
+      id: "app-privacy",
+      title: "TPF Aid App Privacy Policy",
+      icon: Smartphone,
+      badge: "Google Play Store",
+      description: "Official policy for Google Play Store & mobile app: location, permissions, OTP login, and data deletion.",
+      gradient: "from-teal-600 to-emerald-500",
+      bgGradient: darkMode
+        ? "from-teal-900/25 to-emerald-800/25"
+        : "from-emerald-50 to-teal-100/60",
+      lastUpdated: "27th October 2026"
+    },
+    {
       id: "privacy",
-      title: "Privacy Policy",
+      title: "Privacy Policy (Web & Org)",
       icon: Shield,
       description: "Your trust is sacred. Learn how we protect and handle your personal information.",
       gradient: "from-emerald-500 to-emerald-600",
@@ -83,22 +96,21 @@ export default function Policies({ darkMode }) {
     }
   };
 
-  // if (selectedPolicy) {
-  //   return (
-  //     <div className={`min-h-screen ${darkMode ? 'bg-zinc-900' : 'bg-white'}`}>
-  //       {selectedPolicy === "privacy" && <PrivacyPolicy darkMode={darkMode} onBack={() => { setSelectedPolicy(null); window.scrollTo(0, 0); }} />}
-  //       {selectedPolicy === "terms" && <TermsOfUse darkMode={darkMode} onBack={() => { setSelectedPolicy(null); window.scrollTo(0, 0); }} />}
-  //       {selectedPolicy === "pricing" && <Pricing darkMode={darkMode} onBack={() => { setSelectedPolicy(null); window.scrollTo(0, 0); }} />}
-  //       {selectedPolicy === "governance" && <Governance darkMode={darkMode} onBack={() => { setSelectedPolicy(null); window.scrollTo(0, 0); }} />}
-  //     </div>
-  //   );
-  // }
-
 return (
   <div className={`min-h-screen ${darkMode ? 'bg-zinc-900' : 'bg-white'}`}>
 
     {selectedPolicy ? (
       <div className="pt-24 sm:pt-28 md:pt-32">
+
+        {selectedPolicy === "app-privacy" && (
+          <AppPrivacyPolicy
+            darkMode={darkMode}
+            onBack={() => {
+              setSelectedPolicy(null);
+              window.scrollTo(0, 0);
+            }}
+          />
+        )}
 
         {selectedPolicy === "privacy" && (
           <PrivacyPolicy
@@ -238,10 +250,17 @@ return (
                         darkMode ? 'border-zinc-700/50' : 'border-zinc-200'
                       } border-b`}
                     >
-                      <div
-                        className={`bg-gradient-to-r ${policy.gradient} w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-3 sm:mb-4 shadow-lg`}
-                      >
-                        <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                      <div className="flex items-start justify-between mb-3 sm:mb-4">
+                        <div
+                          className={`bg-gradient-to-r ${policy.gradient} w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shadow-lg`}
+                        >
+                          <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                        </div>
+                        {policy.badge && (
+                          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                            {policy.badge}
+                          </span>
+                        )}
                       </div>
 
                       <h2
